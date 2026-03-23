@@ -1,0 +1,113 @@
+.tab-bar {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 1rem;
+}
+
+.window-controls {
+  display: flex;
+  gap: 8px;
+  margin-right: 1.5rem;
+}
+
+.control {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #333;
+}
+
+.control.close { background: #ff5f56; }
+.control.minimize { background: #ffbd2e; }
+.control.maximize { background: #27c93f; }
+
+.tabs-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  height: 100%;
+  padding-top: 8px;
+}
+
+.tab-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-secondary);
+  padding: 0 12px;
+  height: 100%;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  min-width: 200px;
+  max-width: 240px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  border-bottom: none;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.tab-item.active {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+}
+
+.tab-item.danger {
+  background: linear-gradient(to top, rgba(239, 68, 68, 0.1), var(--bg-secondary));
+  border-top-color: rgba(239, 68, 68, 0.4);
+}
+
+.tab-item.safe {
+  background: linear-gradient(to top, rgba(16, 185, 129, 0.05), var(--bg-secondary));
+  border-top-color: rgba(16, 185, 129, 0.3);
+}
+
+.tab-item.warning {
+  background: linear-gradient(to top, rgba(245, 158, 11, 0.1), var(--bg-secondary));
+  border-top-color: rgba(245, 158, 11, 0.4);
+}
+
+.tab-title {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.close-tab {
+  opacity: 0;
+  transition: opacity 0.2s;
+  cursor: pointer;
+}
+
+.tab-item:hover .close-tab {
+  opacity: 1;
+}
+
+.close-tab:hover {
+  color: var(--accent-danger);
+}
+
+.new-tab-btn {
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.new-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
