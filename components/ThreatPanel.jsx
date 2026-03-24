@@ -62,7 +62,7 @@ const ThreatPanel = ({ isOpen, report, onClose }) => {
             <div className="metric-info">
               <span className="metric-title">Domain Similarity</span>
               <span className={`metric-status ${report.typosquatting ? 'danger-text' : 'safe-text'}`}>
-                {report.typosquatting ? 'Typosquatting Detected' : 'No issues found'}
+                {report.typosquatting ? `Typosquatting (Target: ${report.targetDomain})` : 'No issues found'}
               </span>
             </div>
           </div>
@@ -82,7 +82,7 @@ const ThreatPanel = ({ isOpen, report, onClose }) => {
             <div className="metric-info">
               <span className="metric-title">AI Content Analysis</span>
               <span className={`metric-status ${report.phishingContent ? 'danger-text' : 'safe-text'}`}>
-                {report.phishingContent ? 'Urgency/Coercion Detected' : 'Content looks normal'}
+                {report.phishingContent ? `Suspicious keywords: ${report.flaggedKeywords?.join(', ')}` : 'Content looks normal'}
               </span>
             </div>
           </div>

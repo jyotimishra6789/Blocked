@@ -47,55 +47,119 @@ export const initialWebsites = [
   }
 ];
 
+// Helper to calculate Levenshtein distance
+const levenshtein = (a, b) => {
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
+  const matrix = Array(a.length + 1).fill(null).map(() => Array(b.length + 1).fill(null));
+  for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+  for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j - 1] + cost
+      );
+    }
+  }
+  return matrix[a.length][b.length];
+};
+
+const topDomains = ['paypal.com', 'google.com', 'facebook.com', 'apple.com', 'amazon.com', 'microsoft.com'];
+const phishingKeywords = ['urgent', 'suspended', 'verify your identity', 'claim now', 'won', 'password required', 'unauthorized access'];
+
 // Mock Analysis Engine
 export const analyzeUrl = (urlStr) => {
   let hostname = '';
   try {
     const url = new URL(urlStr);
-    hostname = url.hostname;
+    hostname = url.hostname.replace('www.', ''); // normalize a bit
   } catch (e) {
-    return { score: 100, typosquatting: false, newDomain: false, age: 'Unknown', phishingContent: false };
+    return { score: 100, typosquatting: false, newDomain: false, age: 'Unknown', phishingContent: false, flags: [] };
   }
 
-  // Safe site mock
-  if (hostname.includes('paypal.com')) {
-    return {
-      score: 98,
-      typosquatting: false,
-      newDomain: false,
-      age: 'Created 24 years ago',
-      phishingContent: false
-    };
+  // 1. Domain Similarity Analysis
+  let isTyposquat = false;
+  let targetSafeDomain = null;
+  let typosquatPenalty = 0;
+
+  for (const domain of topDomains) {
+    if (hostname === domain || hostname.endsWith('.' + domain)) continue; // It's the actual safe domain
+    const distance = levenshtein(hostname, domain);
+    // If it's very close but not exact (e.g. palpal vs paypal, distance 1 or 2)
+    if (distance > 0 && distance <= 2) {
+      isTyposquat = true;
+      targetSafeDomain = domain;
+      typosquatPenalty = 50; 
+      break;
+    }
   }
 
-  // Typosquatting / Phishing mock
-  if (hostname.includes('palpal.com')) {
-    return {
-      score: 12,
-      typosquatting: true,
-      newDomain: true,
-      age: 'Registered 2 days ago',
-      phishingContent: true
-    };
+  // 2. Mock Content Analysis
+  let hasPhishingContent = false;
+  let contentPenalty = 0;
+  let flaggedKeywords = [];
+  
+  // Try to find the content in our mock DB to scan it, otherwise assume safe for now
+  const matchedSite = initialWebsites.find(site => site.url === urlStr);
+  const siteContent = matchedSite ? matchedSite.content.toLowerCase() : '';
+
+  if (siteContent) {
+    for (const kw of phishingKeywords) {
+      if (siteContent.includes(kw)) {
+        hasPhishingContent = true;
+        flaggedKeywords.push(kw);
+        contentPenalty += 20; 
+      }
+    }
+  } else {
+    // If no mock body, try to guess from URL
+    if (hostname.includes('crypto') || hostname.includes('free') || hostname.includes('win')) {
+      hasPhishingContent = true;
+      flaggedKeywords.push('suspicious URL keywords');
+      contentPenalty += 30;
+    }
   }
 
-  // Scam / High Urgency mock
-  if (hostname.includes('crypto')) {
-    return {
-      score: 25,
-      typosquatting: false,
-      newDomain: true,
-      age: 'Registered 5 hours ago',
-      phishingContent: true
-    };
+  // 3. Domain Age Simulation
+  let isNewDomain = false;
+  let ageStr = 'Registered 5 years ago';
+  let agePenalty = 0;
+
+  // Let's hardcode a few known ones for the demo flow, randomizing others
+  if (topDomains.includes(hostname) || hostname.endsWith('paypal.com')) {
+    ageStr = 'Registered 24 years ago';
+  } else if (isTyposquat || hasPhishingContent) {
+    // High chance of being new if it's shady
+    isNewDomain = true;
+    ageStr = 'Registered ' + Math.floor(Math.random() * 10 + 1) + ' days ago';
+    agePenalty = 30;
+  } else {
+    // Random safe age
+    ageStr = 'Registered ' + Math.floor(Math.random() * 10 + 2) + ' years ago';
   }
 
-  // Generic fallback
+  // 4. Calculate Final Bruh Score
+  let score = 100 - typosquatPenalty - contentPenalty - agePenalty;
+  
+  // Clamp score
+  score = Math.max(0, Math.min(100, score));
+
+  let flags = [];
+  if (isTyposquat) flags.push(`Looks similar to ${targetSafeDomain}`);
+  if (hasPhishingContent) flags.push(`Found suspicious keywords: ${flaggedKeywords.join(', ')}`);
+  if (isNewDomain) flags.push(`Very new domain (${ageStr})`);
+
   return {
-    score: 85,
-    typosquatting: false,
-    newDomain: false,
-    age: 'Registered 5 years ago',
-    phishingContent: false
+    score,
+    typosquatting: isTyposquat,
+    targetDomain: targetSafeDomain,
+    newDomain: isNewDomain,
+    age: ageStr,
+    phishingContent: hasPhishingContent,
+    flaggedKeywords,
+    flags
   };
 };
