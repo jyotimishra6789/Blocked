@@ -7,20 +7,32 @@ import { initialWebsites, analyzeUrl } from './utils/mockEngine';
 import './App.css';
 
 function App() {
-  const [currentUrl, setCurrentUrl] = useState('https://app.palpal.com/login');
-  const [inputValue, setInputValue] = useState(currentUrl);
-  const [securityReport, setSecurityReport] = useState(analyzeUrl(currentUrl));
+  const [tabs, setTabs] = useState([
+    {
+      id: 1,
+      url: 'https://app.palpal.com/login',
+      inputValue: 'https://app.palpal.com/login',
+      securityReport: analyzeUrl('https://app.palpal.com/login')
+    }
+  ]);
+  const [activeTabId, setActiveTabId] = useState(1);
   const [isThreatPanelOpen, setIsThreatPanelOpen] = useState(false);
+
+  const activeTab = tabs.find(t => t.id === activeTabId) || tabs[0];
 
   const handleNavigate = (url) => {
     let cleanUrl = url.trim();
     if (!cleanUrl.startsWith('http')) {
       cleanUrl = 'https://' + cleanUrl;
     }
-    setCurrentUrl(cleanUrl);
-    setInputValue(cleanUrl);
+    
     const report = analyzeUrl(cleanUrl);
-    setSecurityReport(report);
+    setTabs(tabs.map(t => 
+      t.id === activeTabId 
+        ? { ...t, url: cleanUrl, inputValue: cleanUrl, securityReport: report }
+        : t
+    ));
+
     if (report.score < 50) {
       setIsThreatPanelOpen(true);
     } else {
@@ -28,21 +40,54 @@ function App() {
     }
   };
 
-  const currentWebsiteMock = initialWebsites.find(site => site.url === currentUrl);
+  const handleCreateTab = () => {
+    const newId = Date.now();
+    const defaultUrl = 'https://google.com';
+    const newTab = {
+      id: newId,
+      url: defaultUrl,
+      inputValue: defaultUrl,
+      securityReport: analyzeUrl(defaultUrl)
+    };
+    setTabs([...tabs, newTab]);
+    setActiveTabId(newId);
+    setIsThreatPanelOpen(false);
+  };
+
+  const handleCloseTab = (id) => {
+    if (tabs.length === 1) return; // Prevent closing the last tab
+    const newTabs = tabs.filter(t => t.id !== id);
+    setTabs(newTabs);
+    if (activeTabId === id) {
+      setActiveTabId(newTabs[newTabs.length - 1].id);
+    }
+  };
+
+  const setInputValue = (val) => {
+    setTabs(tabs.map(t => t.id === activeTabId ? { ...t, inputValue: val } : t));
+  };
+
+  const currentWebsiteMock = initialWebsites.find(site => site.url === activeTab.url);
 
   return (
     <Desktop>
       <div className="browser-window glass-panel">
         
         {/* Window controls and Tabs */}
-        <TabBar url={currentUrl} report={securityReport} />
+        <TabBar 
+          tabs={tabs} 
+          activeTabId={activeTabId} 
+          setActiveTabId={setActiveTabId} 
+          handleCreateTab={handleCreateTab} 
+          handleCloseTab={handleCloseTab} 
+        />
 
         {/* Address Bar Area */}
         <AddressBar 
-          inputValue={inputValue} 
+          inputValue={activeTab.inputValue} 
           setInputValue={setInputValue} 
           handleNavigate={handleNavigate}
-          report={securityReport}
+          report={activeTab.securityReport}
           toggleThreatPanel={() => setIsThreatPanelOpen(!isThreatPanelOpen)}
         />
 
@@ -51,7 +96,7 @@ function App() {
           {/* Threat Panel overlay/drawer */}
           <ThreatPanel 
             isOpen={isThreatPanelOpen} 
-            report={securityReport} 
+            report={activeTab.securityReport} 
             onClose={() => setIsThreatPanelOpen(false)} 
           />
           
@@ -61,7 +106,7 @@ function App() {
             ) : (
               <div className="error-page">
                 <h2>Site Not Found</h2>
-                <p>The mock engine does not have content for {currentUrl}.</p>
+                <p>The mock engine does not have content for {activeTab.url}.</p>
                 <div style={{marginTop: '2rem'}}>
                   Try: 
                   <button onClick={() => handleNavigate('https://app.paypal.com/login')} className="demo-btn">Safe Site (paypal.com)</button>

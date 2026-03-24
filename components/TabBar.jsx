@@ -2,31 +2,7 @@ import React from 'react';
 import { Plus, X, ShieldAlert, ShieldCheck, Shield } from 'lucide-react';
 import './TabBar.css';
 
-const TabBar = ({ url, report }) => {
-  // Determine tab style based on report score
-  let tabClass = 'tab-item active';
-  let Icon = Shield;
-  let iconColor = 'var(--text-muted)';
-  
-  if (report) {
-    if (report.score < 40) {
-      tabClass += ' danger';
-      Icon = ShieldAlert;
-      iconColor = 'var(--accent-danger)';
-    } else if (report.score > 80) {
-      tabClass += ' safe';
-      Icon = ShieldCheck;
-      iconColor = 'var(--accent-success)';
-    } else {
-      tabClass += ' warning';
-      Icon = ShieldAlert;
-      iconColor = 'var(--accent-warning)';
-    }
-  }
-
-  // Extract domain for tab title
-  const domain = url ? new URL(url).hostname : 'New Tab';
-
+const TabBar = ({ tabs, activeTabId, setActiveTabId, handleCreateTab, handleCloseTab }) => {
   return (
     <div className="tab-bar">
       {/* Mac-style Window Controls */}
@@ -38,13 +14,50 @@ const TabBar = ({ url, report }) => {
       
       {/* Tabs list */}
       <div className="tabs-container">
-        <div className={tabClass}>
-          <Icon size={16} color={iconColor} className="tab-icon" />
-          <span className="tab-title">{domain}</span>
-          <X size={14} className="close-tab" />
-        </div>
+        {tabs.map((tab) => {
+          let tabClass = \`tab-item \${tab.id === activeTabId ? 'active' : ''}\`;
+          let Icon = Shield;
+          let iconColor = 'var(--text-muted)';
+          
+          if (tab.securityReport) {
+            if (tab.securityReport.score < 40) {
+              tabClass += ' danger';
+              Icon = ShieldAlert;
+              iconColor = 'var(--accent-danger)';
+            } else if (tab.securityReport.score > 80) {
+              tabClass += ' safe';
+              Icon = ShieldCheck;
+              iconColor = 'var(--accent-success)';
+            } else {
+              tabClass += ' warning';
+              Icon = ShieldAlert;
+              iconColor = 'var(--accent-warning)';
+            }
+          }
+
+          const domain = tab.url ? new URL(tab.url).hostname : 'New Tab';
+
+          return (
+            <div 
+              key={tab.id} 
+              className={tabClass}
+              onClick={() => setActiveTabId(tab.id)}
+            >
+              <Icon size={16} color={iconColor} className="tab-icon" />
+              <span className="tab-title">{domain}</span>
+              <X 
+                size={14} 
+                className="close-tab" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCloseTab(tab.id);
+                }} 
+              />
+            </div>
+          );
+        })}
         
-        <button className="new-tab-btn">
+        <button className="new-tab-btn" onClick={handleCreateTab}>
           <Plus size={18} />
         </button>
       </div>
