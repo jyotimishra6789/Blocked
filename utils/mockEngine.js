@@ -73,10 +73,7 @@ export const initialWebsites = [
     content: `
       <div style="font-family: 'Inter', sans-serif; background: radial-gradient(circle at 50% -20%, #312e81 0%, #0f172a 100%); color: white; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
         <div style="text-align: center; margin-bottom: 3rem; animation: fadeDown 0.5s ease-out;">
-          <div style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 24px; backdrop-filter: blur(10px); margin-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.2);">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
-          <h1 style="font-size: 3.5rem; font-weight: 800; margin: 0; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Bruhwser</h1>
+          <img src="/logo.png" alt="Bruhwser Logo" style="height: 140px; width: auto; margin-bottom: 1rem; filter: drop-shadow(0 0 20px rgba(192,132,252,0.3));" />
           <p style="font-size: 1.2rem; color: #94a3b8; margin-top: 0.5rem;">Browse securely. We've got your back.</p>
         </div>
         
