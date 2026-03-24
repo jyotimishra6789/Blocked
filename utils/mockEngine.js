@@ -2,31 +2,42 @@ export const initialWebsites = [
   {
     url: 'https://app.paypal.com/login',
     content: `
-      <div class="mock-banking-app">
-        <div class="mock-login-box">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal Logo" width="120" style="margin-bottom: 1.5rem;" />
-          <h2 style="margin-bottom: 1.5rem;">Log in to your account</h2>
-          <input type="text" class="mock-input" placeholder="Email or mobile number" />
-          <input type="password" class="mock-input" placeholder="Password" />
-          <button class="mock-btn">Log In</button>
+      <div style="font-family: Arial, sans-serif; background-color: #f5f7fa; color: #333; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 2.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center;">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal Logo" width="120" style="margin-bottom: 2rem;" />
+          <h2 style="font-size: 1.5rem; font-weight: 500; margin-bottom: 1.5rem;">Log in to your account</h2>
+          <input type="text" placeholder="Email or mobile number" style="width: 100%; padding: 0.8rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1rem;" />
+          <button style="width: 100%; padding: 0.9rem; background: #0070ba; color: white; border: none; border-radius: 24px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-bottom: 1rem;">Next</button>
+          <div style="display: flex; align-items: center; margin: 1rem 0;">
+            <div style="flex: 1; height: 1px; background: #ccc;"></div>
+            <span style="padding: 0 10px; color: #666; font-size: 0.9rem;">or</span>
+            <div style="flex: 1; height: 1px; background: #ccc;"></div>
+          </div>
+          <button style="width: 100%; padding: 0.9rem; background: white; color: #0070ba; border: 1px solid #0070ba; border-radius: 24px; font-size: 1rem; font-weight: bold; cursor: pointer;">Sign Up</button>
         </div>
+        <footer style="margin-top: 2rem; color: #666; font-size: 0.85rem; display: flex; gap: 1rem;">
+          <span>Contact Us</span>
+          <span>Privacy</span>
+          <span>Legal</span>
+          <span>Policy Updates</span>
+        </footer>
       </div>
     `,
   },
   {
     url: 'https://app.palpal.com/login',
     content: `
-      <div class="mock-banking-app">
-        <div class="mock-login-box">
-          <div class="mock-urgent-banner">
-            <strong>URGENT:</strong> Your account will be permanently suspended in 24 hours. Log in immediately to verify your identity.
+      <div style="font-family: Arial, sans-serif; background-color: #f5f7fa; color: #333; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 2.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center;">
+          <div style="background: #fee2e2; color: #991b1b; padding: 1rem; border-radius: 4px; font-size: 0.9rem; text-align: left; border-left: 4px solid #ef4444; margin-bottom: 1.5rem;">
+            <strong>URGENT:</strong> We noticed unusual activity. Your account will be permanently suspended in 24 hours unless you verify your identity.
           </div>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal Logo" width="120" style="margin-bottom: 1.5rem;" />
-          <h2 style="margin-bottom: 1.5rem;">Secure Verification Required</h2>
-          <input type="text" class="mock-input" placeholder="Email or mobile number" />
-          <input type="password" class="mock-input" placeholder="Password" />
-          <input type="text" class="mock-input" placeholder="Social Security Number (Required)" />
-          <button class="mock-btn" style="background: red;">Verify Identity Now</button>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal Logo" width="120" style="margin-bottom: 2rem;" />
+          <h2 style="font-size: 1.5rem; font-weight: 500; margin-bottom: 1.5rem;">Secure Verification Required</h2>
+          <input type="text" placeholder="Email or mobile number" style="width: 100%; padding: 0.8rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1rem;" />
+          <input type="password" placeholder="Password required" style="width: 100%; padding: 0.8rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1rem;" />
+          <input type="text" placeholder="Social Security Number" style="width: 100%; padding: 0.8rem; margin-bottom: 1.5rem; border: 1px solid #ef4444; border-radius: 4px; box-sizing: border-box; font-size: 1rem;" />
+          <button style="width: 100%; padding: 0.9rem; background: #dc2626; color: white; border: none; border-radius: 24px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-bottom: 1rem;">Verify Identity Now</button>
         </div>
       </div>
     `,
@@ -34,13 +45,25 @@ export const initialWebsites = [
   {
     url: 'https://crypto-win-now.net',
     content: `
-      <div class="mock-banking-app" style="background: #1e1b4b; color: white;">
-        <div class="mock-login-box" style="background: #312e81; border: 2px solid #fbbf24; color: white;">
-          <h1 style="color: #fbbf24; font-size: 2.5rem; text-transform: uppercase;">You've Won 1.5 BTC!</h1>
-          <p style="margin: 1rem 0; font-size: 1.2rem;">Claim your massive crypto prize before the timer runs out!</p>
-          <div style="font-size: 2rem; font-weight: bold; color: #f87171; margin-bottom: 1rem;">14:59</div>
-          <input type="text" class="mock-input" placeholder="Enter your wallet private key to claim" style="background: #4338ca; color: white; border-color: #4f46e5;" />
-          <button class="mock-btn" style="background: #fbbf24; color: black; font-size: 1.2rem;">CLAIM NOW</button>
+      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #000 100%); color: white; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="background: rgba(49, 46, 129, 0.8); padding: 3rem; border-radius: 16px; border: 2px solid #fbbf24; box-shadow: 0 0 40px rgba(251, 191, 36, 0.3); width: 100%; max-width: 500px; text-align: center; backdrop-filter: blur(10px);">
+          <div style="display: inline-block; background: #fbbf24; color: black; padding: 0.5rem 1rem; border-radius: 20px; font-weight: bold; font-size: 0.9rem; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">Exclusive Giveaway</div>
+          <h1 style="color: #fbbf24; font-size: 3rem; margin: 0 0 1rem 0; text-transform: uppercase;">You've Won 1.5 BTC!</h1>
+          <p style="margin: 0 0 2rem 0; font-size: 1.2rem; color: #cbd5e1;">Your wallet has been selected for our daily jackpot. Claim your massive crypto prize before the timer runs out!</p>
+          
+          <div style="background: rgba(0,0,0,0.5); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+            <div style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 0.5rem;">Offer expires in:</div>
+            <div style="font-family: monospace; font-size: 3rem; font-weight: bold; color: #f87171; text-shadow: 0 0 10px rgba(248, 113, 113, 0.5);">14:59</div>
+          </div>
+          
+          <input type="text" placeholder="Enter your 12-word recovery phrase to claim" style="width: 100%; padding: 1.2rem; margin-bottom: 1.5rem; background: rgba(0,0,0,0.3); color: white; border: 1px solid #6366f1; border-radius: 8px; box-sizing: border-box; font-size: 1rem; text-align: center;" />
+          
+          <button style="width: 100%; padding: 1.2rem; background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); color: black; border: none; border-radius: 8px; font-size: 1.3rem; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: transform 0.2s; box-shadow: 0 10px 20px rgba(217, 119, 6, 0.4);">CLAIM MY BITCOIN NOW</button>
+          
+          <div style="margin-top: 1.5rem; font-size: 0.8rem; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+            <span style="display: inline-block; width: 8px; height: 8px; background: #22c55e; border-radius: 50%;"></span>
+            1,432 users claiming right now
+          </div>
         </div>
       </div>
     `,
