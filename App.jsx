@@ -3,6 +3,7 @@ import TabBar from './components/TabBar';
 import AddressBar from './components/AddressBar';
 import ThreatPanel from './components/ThreatPanel';
 import Desktop from './components/Desktop';
+import BlockedScreen from './components/BlockedScreen';
 import { initialWebsites, analyzeUrl } from './utils/mockEngine';
 import './App.css';
 
@@ -12,7 +13,8 @@ function App() {
       id: 1,
       url: 'bruhwser://home',
       inputValue: '',
-      securityReport: analyzeUrl('bruhwser://home')
+      securityReport: analyzeUrl('bruhwser://home'),
+      bypassed: false
     }
   ]);
   const [activeTabId, setActiveTabId] = useState(1);
@@ -29,7 +31,7 @@ function App() {
     const report = analyzeUrl(cleanUrl);
     setTabs(tabs.map(t => 
       t.id === activeTabId 
-        ? { ...t, url: cleanUrl, inputValue: cleanUrl, securityReport: report }
+        ? { ...t, url: cleanUrl, inputValue: cleanUrl, securityReport: report, bypassed: false }
         : t
     ));
 
@@ -47,7 +49,8 @@ function App() {
       id: newId,
       url: defaultUrl,
       inputValue: '',
-      securityReport: analyzeUrl(defaultUrl)
+      securityReport: analyzeUrl(defaultUrl),
+      bypassed: false
     };
     setTabs([...tabs, newTab]);
     setActiveTabId(newId);
@@ -101,7 +104,14 @@ function App() {
           />
           
           <div className="browser-viewport">
-            {currentWebsiteMock ? (
+            {activeTab.securityReport && activeTab.securityReport.score <= 40 && !activeTab.bypassed ? (
+              <BlockedScreen 
+                url={activeTab.url}
+                report={activeTab.securityReport}
+                onGoBack={() => handleCloseTab(activeTab.id) || handleNavigate('bruhwser://home')}
+                onProceed={() => setTabs(tabs.map(t => t.id === activeTabId ? { ...t, bypassed: true } : t))}
+              />
+            ) : currentWebsiteMock ? (
               <div dangerouslySetInnerHTML={{ __html: currentWebsiteMock.content }} className="mock-site-content" />
             ) : (
               <div className="error-page">
