@@ -15,7 +15,7 @@ const TabBar = ({ tabs, activeTabId, setActiveTabId, handleCreateTab, handleClos
       {/* Tabs list */}
       <div className="tabs-container">
         {tabs.map((tab) => {
-          let tabClass = \`tab-item \${tab.id === activeTabId ? 'active' : ''}\`;
+          let tabClass = `tab-item ${tab.id === activeTabId ? 'active' : ''}`;
           let Icon = Shield;
           let iconColor = 'var(--text-muted)';
           
