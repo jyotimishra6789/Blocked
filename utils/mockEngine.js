@@ -67,6 +67,48 @@ export const initialWebsites = [
         </div>
       </div>
     `,
+  },
+  {
+    url: 'bruhwser://home',
+    content: `
+      <div style="font-family: 'Inter', sans-serif; background: radial-gradient(circle at 50% -20%, #312e81 0%, #0f172a 100%); color: white; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="text-align: center; margin-bottom: 3rem; animation: fadeDown 0.5s ease-out;">
+          <div style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 24px; backdrop-filter: blur(10px); margin-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.2);">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h1 style="font-size: 3.5rem; font-weight: 800; margin: 0; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Bruhwser</h1>
+          <p style="font-size: 1.2rem; color: #94a3b8; margin-top: 0.5rem;">Browse securely. We've got your back.</p>
+        </div>
+        
+        <div style="width: 100%; max-width: 600px; padding: 0 2rem;">
+          <div style="position: relative; width: 100%;">
+            <svg style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #94a3b8;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Search the web or type a URL..." style="width: 100%; padding: 1.2rem 1.2rem 1.2rem 3rem; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white; font-size: 1.1rem; outline: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2); backdrop-filter: blur(10px); box-sizing: border-box;" readonly />
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 2rem; margin-top: 4rem;">
+          <div style="text-align: center; cursor: pointer;">
+            <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; transition: background 0.2s;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <span style="font-size: 0.85rem; color: #94a3b8;">Dashboard</span>
+          </div>
+          <div style="text-align: center; cursor: pointer;">
+            <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; transition: background 0.2s;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            </div>
+            <span style="font-size: 0.85rem; color: #94a3b8;">History</span>
+          </div>
+          <div style="text-align: center; cursor: pointer;">
+            <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; transition: background 0.2s;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <span style="font-size: 0.85rem; color: #94a3b8;">Bookmarks</span>
+          </div>
+        </div>
+      </div>
+    `,
   }
 ];
 
@@ -95,6 +137,10 @@ const phishingKeywords = ['urgent', 'suspended', 'verify your identity', 'claim 
 
 // Mock Analysis Engine
 export const analyzeUrl = (urlStr) => {
+  if (urlStr === 'bruhwser://home' || urlStr === '') {
+    return { score: 100, typosquatting: false, newDomain: false, age: 'N/A', phishingContent: false, flags: [] };
+  }
+
   let hostname = '';
   try {
     const url = new URL(urlStr);

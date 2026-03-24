@@ -10,9 +10,9 @@ function App() {
   const [tabs, setTabs] = useState([
     {
       id: 1,
-      url: 'https://app.palpal.com/login',
-      inputValue: 'https://app.palpal.com/login',
-      securityReport: analyzeUrl('https://app.palpal.com/login')
+      url: 'bruhwser://home',
+      inputValue: '',
+      securityReport: analyzeUrl('bruhwser://home')
     }
   ]);
   const [activeTabId, setActiveTabId] = useState(1);
@@ -42,11 +42,11 @@ function App() {
 
   const handleCreateTab = () => {
     const newId = Date.now();
-    const defaultUrl = 'https://google.com';
+    const defaultUrl = 'bruhwser://home';
     const newTab = {
       id: newId,
       url: defaultUrl,
-      inputValue: defaultUrl,
+      inputValue: '',
       securityReport: analyzeUrl(defaultUrl)
     };
     setTabs([...tabs, newTab]);
