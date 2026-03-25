@@ -7,7 +7,6 @@ import BlockedScreen from './components/BlockedScreen';
 import EmailScanner from './components/EmailScanner';
 import { initialWebsites, analyzeUrl } from './utils/mockEngine';
 import { analyzeContentWithAI } from './utils/aiEngine';
-import { mockPrivacyEngine } from './utils/mockPrivacyEngine';
 import { behavioralAnalysisScript } from './utils/behavioralAnalysis';
 import './App.css';
 
@@ -249,6 +248,16 @@ function App() {
               <iframe 
                 srcDoc={
                   privacyMode 
+                    ? `
+                      <script>
+                        (function() {
+                          const r = Math.floor(Math.random() * 10000);
+                          const spoofedUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 BruhwserPrivacy/' + r;
+                          const spoofedPlatform = 'Win32-' + r;
+                          const spoofedLanguage = 'en-US-' + r;
+                          
+                          // Basic Overrides
+                          Object.defineProperty(navigator, 'userAgent', { get: () => spoofedUserAgent });
                           Object.defineProperty(navigator, 'platform', { get: () => spoofedPlatform });
                           Object.defineProperty(navigator, 'language', { get: () => spoofedLanguage });
                           
@@ -308,9 +317,10 @@ function App() {
                           });
                         })();
                       </script>
+                      <script>${behavioralAnalysisScript}</script>
                       ${currentWebsiteMock.content}
                     `
-                    : currentWebsiteMock.content
+                    : `<script>${behavioralAnalysisScript}</script>${currentWebsiteMock.content}`
                 } 
                 className="mock-site-iframe" 
                 title="Mock Site Content"
