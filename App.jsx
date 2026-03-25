@@ -126,14 +126,64 @@ function App() {
                           const spoofedPlatform = 'Win32-' + r;
                           const spoofedLanguage = 'en-US-' + r;
                           
+                          // Basic Overrides
                           Object.defineProperty(navigator, 'userAgent', { get: () => spoofedUserAgent });
                           Object.defineProperty(navigator, 'platform', { get: () => spoofedPlatform });
                           Object.defineProperty(navigator, 'language', { get: () => spoofedLanguage });
                           
-                          console.log('[Privacy Mode] Fingerprint spoofed:', {
+                          // Active Deception: Memory & Screen
+                          const spoofedMemory = [2, 4, 8, 16][Math.floor(Math.random() * 4)];
+                          Object.defineProperty(navigator, 'deviceMemory', { get: () => spoofedMemory });
+                          
+                          const screenWidth = [1366, 1440, 1920, 2560][Math.floor(Math.random() * 4)];
+                          const screenHeight = [768, 900, 1080, 1440][Math.floor(Math.random() * 4)];
+                          Object.defineProperty(window.screen, 'width', { get: () => screenWidth });
+                          Object.defineProperty(window.screen, 'height', { get: () => screenHeight });
+                          Object.defineProperty(window.screen, 'colorDepth', { get: () => 24 });
+                          Object.defineProperty(window.screen, 'pixelDepth', { get: () => 24 });
+
+                          // Active Deception: Canvas Noise Injection
+                          const originalToDataURL = HTMLCanvasElement.prototype.toDataURL;
+                          HTMLCanvasElement.prototype.toDataURL = function() {
+                            const ctx = this.getContext('2d');
+                            if (ctx) {
+                              ctx.fillStyle = \`rgba(\${Math.floor(Math.random() * 255)}, \${Math.floor(Math.random() * 255)}, \${Math.floor(Math.random() * 255)}, 0.01)\`;
+                              ctx.fillRect(0, 0, 1, 1);
+                            }
+                            return originalToDataURL.apply(this, arguments);
+                          };
+
+                          const originalGetImageData = CanvasRenderingContext2D.prototype.getImageData;
+                          CanvasRenderingContext2D.prototype.getImageData = function() {
+                            const imageData = originalGetImageData.apply(this, arguments);
+                            if (imageData && imageData.data && imageData.data.length > 0) {
+                              imageData.data[0] = (imageData.data[0] + Math.floor(Math.random() * 3)) % 255;
+                            }
+                            return imageData;
+                          };
+
+                          // Active Deception: AudioContext Variation
+                          const AudioContext = window.AudioContext || window.webkitAudioContext;
+                          if (AudioContext) {
+                            const originalCreateOscillator = AudioContext.prototype.createOscillator;
+                            AudioContext.prototype.createOscillator = function() {
+                              const oscillator = originalCreateOscillator.apply(this, arguments);
+                              const originalStart = oscillator.start;
+                              oscillator.start = function() {
+                                this.frequency.value = this.frequency.value + (Math.random() * 0.001);
+                                return originalStart.apply(this, arguments);
+                              };
+                              return oscillator;
+                            };
+                          }
+
+                          console.log('[Privacy Mode] Active Deception Engine Enabled:', {
                             userAgent: navigator.userAgent,
                             platform: navigator.platform,
-                            language: navigator.language
+                            deviceMemory: navigator.deviceMemory,
+                            screenResolution: \`\${window.screen.width}x\${window.screen.height}\`,
+                            canvasSpoofed: true,
+                            audioSpoofed: true
                           });
                         })();
                       </script>

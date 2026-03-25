@@ -32,6 +32,26 @@
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
+.deception-label {
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-success);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 12px;
+  animation: pulse-glow 2s infinite;
+  white-space: nowrap;
+}
+
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  70% { box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
 .address-input-wrapper {
   flex: 1;
   display: flex;

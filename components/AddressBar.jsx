@@ -46,6 +46,9 @@ const AddressBar = ({ inputValue, setInputValue, handleNavigate, report, toggleT
       </div>
 
       <div className="extensions-area">
+        {privacyMode && (
+          <div className="deception-label">Active Deception Enabled</div>
+        )}
         <button 
           className={`nav-btn privacy-toggle ${privacyMode ? 'active' : ''}`} 
           onClick={() => setPrivacyMode(!privacyMode)} 
