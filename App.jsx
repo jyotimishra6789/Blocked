@@ -7,6 +7,8 @@ import BlockedScreen from './components/BlockedScreen';
 import EmailScanner from './components/EmailScanner';
 import { initialWebsites, analyzeUrl } from './utils/mockEngine';
 import { analyzeContentWithAI } from './utils/aiEngine';
+import { mockPrivacyEngine } from './utils/mockPrivacyEngine';
+import { behavioralAnalysisScript } from './utils/behavioralAnalysis';
 import './App.css';
 
 function App() {
@@ -23,6 +25,45 @@ function App() {
   const [activeTabId, setActiveTabId] = useState(1);
   const [isThreatPanelOpen, setIsThreatPanelOpen] = useState(false);
   const [privacyMode, setPrivacyMode] = useState(false);
+
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data?.type === 'BEHAVIOR_ALERT') {
+        const { behavior, message } = event.data;
+        
+        setTabs(currentTabs => {
+          const tIndex = currentTabs.findIndex(t => t.id === activeTabId);
+          if (tIndex === -1) return currentTabs;
+          
+          const t = currentTabs[tIndex];
+          let newScore = t.securityReport.score - 40;
+          newScore = Math.max(0, newScore);
+          
+          const newFlags = t.securityReport.behavioralFlags ? [...t.securityReport.behavioralFlags] : [];
+          if (!newFlags.includes(message)) {
+            newFlags.push(message);
+          }
+
+          const newReport = {
+            ...t.securityReport,
+            score: newScore,
+            behavioralFlags: newFlags
+          };
+
+          if (newScore < 50) {
+            setIsThreatPanelOpen(true);
+          }
+
+          const newTabs = [...currentTabs];
+          newTabs[tIndex] = { ...t, securityReport: newReport };
+          return newTabs;
+        });
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [activeTabId]);
 
   const activeTab = tabs.find(t => t.id === activeTabId) || tabs[0];
 
@@ -208,16 +249,6 @@ function App() {
               <iframe 
                 srcDoc={
                   privacyMode 
-                    ? `
-                      <script>
-                        (function() {
-                          const r = Math.floor(Math.random() * 10000);
-                          const spoofedUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 BruhwserPrivacy/' + r;
-                          const spoofedPlatform = 'Win32-' + r;
-                          const spoofedLanguage = 'en-US-' + r;
-                          
-                          // Basic Overrides
-                          Object.defineProperty(navigator, 'userAgent', { get: () => spoofedUserAgent });
                           Object.defineProperty(navigator, 'platform', { get: () => spoofedPlatform });
                           Object.defineProperty(navigator, 'language', { get: () => spoofedLanguage });
                           

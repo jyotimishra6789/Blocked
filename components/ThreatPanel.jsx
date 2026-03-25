@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldAlert, ShieldCheck, X, AlertOctagon, Activity, Search, AlertTriangle } from 'lucide-react';
+import { ShieldAlert, ShieldCheck, X, AlertOctagon, Activity, Search, AlertTriangle, Shield, CheckCircle, Smartphone, Fingerprint, EyeOff, Info } from 'lucide-react';
 import './ThreatPanel.css';
 
 const ThreatPanel = ({ isOpen, report, onClose }) => {
@@ -101,6 +101,27 @@ const ThreatPanel = ({ isOpen, report, onClose }) => {
                 <span className={`metric-status ${report.phishingContent ? 'danger-text' : 'safe-text'}`}>
                   {report.phishingContent ? `Suspicious keywords: ${report.flaggedKeywords?.join(', ')}` : 'Content looks normal'}
                 </span>
+              )}
+            </div>
+          </div>
+
+          <div className="metric-item">
+            <div className="metric-icon"><Activity size={16} /></div>
+            <div className="metric-info">
+              <span className="metric-title">Behavioral Analysis</span>
+              {report.behavioralFlags && report.behavioralFlags.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <span className="metric-status danger-text" style={{ animation: 'pulse-danger 2s infinite' }}>
+                    Suspicious behavior detected
+                  </span>
+                  <ul style={{ margin: 0, paddingLeft: '1.2rem', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                    {report.behavioralFlags.map((flag, idx) => (
+                      <li key={idx} style={{ color: 'var(--accent-warning)', paddingTop: '2px' }}>{flag}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <span className="metric-status safe-text">No anomalous scripts detected</span>
               )}
             </div>
           </div>
