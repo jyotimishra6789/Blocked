@@ -5,6 +5,7 @@ import ThreatPanel from './components/ThreatPanel';
 import Desktop from './components/Desktop';
 import BlockedScreen from './components/BlockedScreen';
 import { initialWebsites, analyzeUrl } from './utils/mockEngine';
+import { analyzeContentWithAI } from './utils/aiEngine';
 import './App.css';
 
 function App() {
@@ -23,13 +24,15 @@ function App() {
 
   const activeTab = tabs.find(t => t.id === activeTabId) || tabs[0];
 
-  const handleNavigate = (url) => {
+  const handleNavigate = async (url) => {
     let cleanUrl = url.trim();
     if (!cleanUrl.startsWith('http')) {
       cleanUrl = 'https://' + cleanUrl;
     }
     
     const report = analyzeUrl(cleanUrl);
+    report.aiStatus = 'scanning';
+    
     setTabs(tabs.map(t => 
       t.id === activeTabId 
         ? { ...t, url: cleanUrl, inputValue: cleanUrl, securityReport: report, bypassed: false }
@@ -40,6 +43,54 @@ function App() {
       setIsThreatPanelOpen(true);
     } else {
       setIsThreatPanelOpen(false);
+    }
+
+    const siteMock = initialWebsites.find(site => site.url === cleanUrl);
+    const contentToScan = siteMock ? siteMock.content : '';
+    
+    if (contentToScan) {
+      const aiResult = await analyzeContentWithAI(cleanUrl, contentToScan);
+      
+      setTabs(currentTabs => currentTabs.map(t => {
+        if (t.id === activeTabId && t.url === cleanUrl) {
+          let newScore = t.securityReport.score;
+          
+          if (aiResult.classification === 'Scam') {
+            newScore = Math.min(newScore, Math.max(0, 100 - aiResult.confidenceScore));
+          } else if (aiResult.classification === 'Suspicious') {
+            newScore = Math.min(newScore, 60);
+          }
+
+          const newReport = {
+            ...t.securityReport,
+            score: newScore,
+            aiStatus: 'complete',
+            aiAnalysis: aiResult
+          };
+
+          if (newScore < 50) setIsThreatPanelOpen(true);
+
+          return {
+            ...t,
+            securityReport: newReport
+          };
+        }
+        return t;
+      }));
+    } else {
+      setTabs(currentTabs => currentTabs.map(t => {
+        if (t.id === activeTabId && t.url === cleanUrl) {
+          return {
+            ...t,
+            securityReport: {
+              ...t.securityReport,
+              aiStatus: 'complete',
+              aiAnalysis: { classification: 'Safe', explanation: 'No content to scan.', confidenceScore: 100 }
+            }
+          };
+        }
+        return t;
+      }));
     }
   };
 

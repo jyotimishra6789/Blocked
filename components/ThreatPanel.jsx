@@ -81,9 +81,27 @@ const ThreatPanel = ({ isOpen, report, onClose }) => {
             <div className="metric-icon"><AlertOctagon size={16} /></div>
             <div className="metric-info">
               <span className="metric-title">AI Content Analysis</span>
-              <span className={`metric-status ${report.phishingContent ? 'danger-text' : 'safe-text'}`}>
-                {report.phishingContent ? `Suspicious keywords: ${report.flaggedKeywords?.join(', ')}` : 'Content looks normal'}
-              </span>
+              {report.aiStatus === 'scanning' ? (
+                <span className="metric-status" style={{ color: 'var(--accent-warning)', animation: 'pulse-glow 2s infinite' }}>
+                  Scanning with AI...
+                </span>
+              ) : report.aiAnalysis ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <span className={`metric-status ${report.aiAnalysis.classification === 'Scam' ? 'danger-text' : report.aiAnalysis.classification === 'Suspicious' ? 'warning-text' : 'safe-text'}`} style={{ color: report.aiAnalysis.classification === 'Suspicious' ? 'var(--accent-warning)' : undefined }}>
+                    {report.aiAnalysis.classification} ({report.aiAnalysis.confidenceScore}% confidence)
+                  </span>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>{report.aiAnalysis.explanation}</p>
+                  <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginTop: '4px' }}>
+                    {report.aiAnalysis.urgency && <span className="score-pill score-pill-danger" style={{ fontSize: '0.65rem', padding: '2px 6px', margin: 0 }}>Urgency Detected</span>}
+                    {report.aiAnalysis.fear && <span className="score-pill score-pill-danger" style={{ fontSize: '0.65rem', padding: '2px 6px', margin: 0 }}>Fear Tactics</span>}
+                    {report.aiAnalysis.rewards && <span className="score-pill score-pill-warning" style={{ fontSize: '0.65rem', padding: '2px 6px', margin: 0 }}>Suspicious Rewards</span>}
+                  </div>
+                </div>
+              ) : (
+                <span className={`metric-status ${report.phishingContent ? 'danger-text' : 'safe-text'}`}>
+                  {report.phishingContent ? `Suspicious keywords: ${report.flaggedKeywords?.join(', ')}` : 'Content looks normal'}
+                </span>
+              )}
             </div>
           </div>
         </div>
