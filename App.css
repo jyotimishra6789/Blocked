@@ -28,6 +28,7 @@
   display: flex;
   background: #ffffff; /* Default background for web contents is white */
   overflow: hidden;
+  min-height: 0;
 }
 
 .browser-viewport {
@@ -35,6 +36,7 @@
   overflow-y: auto;
   position: relative;
   color: #1a1a20; /* Default text color for web contents */
+  min-height: 0;
 }
 
 .mock-site-content, .mock-site-iframe {
