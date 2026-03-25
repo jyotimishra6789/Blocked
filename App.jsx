@@ -19,6 +19,7 @@ function App() {
   ]);
   const [activeTabId, setActiveTabId] = useState(1);
   const [isThreatPanelOpen, setIsThreatPanelOpen] = useState(false);
+  const [privacyMode, setPrivacyMode] = useState(false);
 
   const activeTab = tabs.find(t => t.id === activeTabId) || tabs[0];
 
@@ -92,6 +93,8 @@ function App() {
           handleNavigate={handleNavigate}
           report={activeTab.securityReport}
           toggleThreatPanel={() => setIsThreatPanelOpen(!isThreatPanelOpen)}
+          privacyMode={privacyMode}
+          setPrivacyMode={setPrivacyMode}
         />
 
         {/* Main Viewport */}
@@ -112,7 +115,36 @@ function App() {
                 onProceed={() => setTabs(tabs.map(t => t.id === activeTabId ? { ...t, bypassed: true } : t))}
               />
             ) : currentWebsiteMock ? (
-              <div dangerouslySetInnerHTML={{ __html: currentWebsiteMock.content }} className="mock-site-content" />
+              <iframe 
+                srcDoc={
+                  privacyMode 
+                    ? `
+                      <script>
+                        (function() {
+                          const r = Math.floor(Math.random() * 10000);
+                          const spoofedUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 BruhwserPrivacy/' + r;
+                          const spoofedPlatform = 'Win32-' + r;
+                          const spoofedLanguage = 'en-US-' + r;
+                          
+                          Object.defineProperty(navigator, 'userAgent', { get: () => spoofedUserAgent });
+                          Object.defineProperty(navigator, 'platform', { get: () => spoofedPlatform });
+                          Object.defineProperty(navigator, 'language', { get: () => spoofedLanguage });
+                          
+                          console.log('[Privacy Mode] Fingerprint spoofed:', {
+                            userAgent: navigator.userAgent,
+                            platform: navigator.platform,
+                            language: navigator.language
+                          });
+                        })();
+                      </script>
+                      ${currentWebsiteMock.content}
+                    `
+                    : currentWebsiteMock.content
+                } 
+                className="mock-site-iframe" 
+                title="Mock Site Content"
+                sandbox="allow-scripts allow-same-origin"
+              />
             ) : (
               <div className="error-page">
                 <h2>Site Not Found</h2>

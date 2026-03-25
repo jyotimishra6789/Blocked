@@ -37,9 +37,11 @@
   color: #1a1a20; /* Default text color for web contents */
 }
 
-.mock-site-content {
+.mock-site-content, .mock-site-iframe {
   width: 100%;
   height: 100%;
+  border: none;
+  display: block;
 }
 
 .error-page {

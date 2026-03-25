@@ -27,6 +27,11 @@
   color: var(--text-primary);
 }
 
+.privacy-toggle.active {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
 .address-input-wrapper {
   flex: 1;
   display: flex;

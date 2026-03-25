@@ -1,8 +1,8 @@
 import React from 'react';
-import { ArrowLeft, ArrowRight, RotateCw, ShieldAlert, ShieldCheck, Info } from 'lucide-react';
+import { ArrowLeft, ArrowRight, RotateCw, ShieldAlert, ShieldCheck, Info, EyeOff, Eye } from 'lucide-react';
 import './AddressBar.css';
 
-const AddressBar = ({ inputValue, setInputValue, handleNavigate, report, toggleThreatPanel }) => {
+const AddressBar = ({ inputValue, setInputValue, handleNavigate, report, toggleThreatPanel, privacyMode, setPrivacyMode }) => {
   const onKeyDown = (e) => {
     if (e.key === 'Enter') {
       handleNavigate(inputValue);
@@ -46,6 +46,13 @@ const AddressBar = ({ inputValue, setInputValue, handleNavigate, report, toggleT
       </div>
 
       <div className="extensions-area">
+        <button 
+          className={`nav-btn privacy-toggle ${privacyMode ? 'active' : ''}`} 
+          onClick={() => setPrivacyMode(!privacyMode)} 
+          title="Toggle Privacy Mode (Fingerprint Spoofing)"
+        >
+          {privacyMode ? <EyeOff size={18} color="#10b981" /> : <Eye size={18} />}
+        </button>
         <button className="nav-btn" onClick={toggleThreatPanel} title="Threat Panel">
           <Info size={18} />
         </button>
