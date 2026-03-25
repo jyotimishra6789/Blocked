@@ -108,7 +108,7 @@ function App() {
               <BlockedScreen 
                 url={activeTab.url}
                 report={activeTab.securityReport}
-                onGoBack={() => handleCloseTab(activeTab.id) || handleNavigate('bruhwser://home')}
+                onGoBack={() => handleNavigate('bruhwser://home')}
                 onProceed={() => setTabs(tabs.map(t => t.id === activeTabId ? { ...t, bypassed: true } : t))}
               />
             ) : currentWebsiteMock ? (
