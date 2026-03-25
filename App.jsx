@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TabBar from './components/TabBar';
 import AddressBar from './components/AddressBar';
 import ThreatPanel from './components/ThreatPanel';
