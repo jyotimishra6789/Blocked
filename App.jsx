@@ -4,6 +4,7 @@ import AddressBar from './components/AddressBar';
 import ThreatPanel from './components/ThreatPanel';
 import Desktop from './components/Desktop';
 import BlockedScreen from './components/BlockedScreen';
+import EmailScanner from './components/EmailScanner';
 import { initialWebsites, analyzeUrl } from './utils/mockEngine';
 import { analyzeContentWithAI } from './utils/aiEngine';
 import './App.css';
@@ -109,6 +110,21 @@ function App() {
     setIsThreatPanelOpen(false);
   };
 
+  const handleCreateEmailScannerTab = () => {
+    const newId = Date.now();
+    const defaultUrl = 'bruhwser://email-scanner';
+    const newTab = {
+      id: newId,
+      url: defaultUrl,
+      inputValue: defaultUrl,
+      securityReport: { score: 100 },
+      bypassed: false
+    };
+    setTabs([...tabs, newTab]);
+    setActiveTabId(newId);
+    setIsThreatPanelOpen(false);
+  };
+
   const handleCloseTab = (id) => {
     if (tabs.length === 1) return; // Prevent closing the last tab
     const newTabs = tabs.filter(t => t.id !== id);
@@ -135,6 +151,7 @@ function App() {
           setActiveTabId={setActiveTabId} 
           handleCreateTab={handleCreateTab} 
           handleCloseTab={handleCloseTab} 
+          handleCreateEmailScannerTab={handleCreateEmailScannerTab}
         />
 
         {/* Address Bar Area */}
@@ -165,6 +182,8 @@ function App() {
                 onGoBack={() => handleNavigate('bruhwser://home')}
                 onProceed={() => setTabs(tabs.map(t => t.id === activeTabId ? { ...t, bypassed: true } : t))}
               />
+            ) : activeTab.url === 'bruhwser://email-scanner' ? (
+              <EmailScanner />
             ) : currentWebsiteMock ? (
               <iframe 
                 srcDoc={

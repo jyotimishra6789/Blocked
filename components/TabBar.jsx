@@ -1,8 +1,8 @@
 import React from 'react';
-import { Plus, X, ShieldAlert, ShieldCheck, Shield } from 'lucide-react';
+import { Plus, X, ShieldAlert, ShieldCheck, Shield, Mail } from 'lucide-react';
 import './TabBar.css';
 
-const TabBar = ({ tabs, activeTabId, setActiveTabId, handleCreateTab, handleCloseTab }) => {
+const TabBar = ({ tabs, activeTabId, setActiveTabId, handleCreateTab, handleCloseTab, handleCreateEmailScannerTab }) => {
   return (
     <div className="tab-bar">
       {/* Mac-style Window Controls */}
@@ -57,8 +57,11 @@ const TabBar = ({ tabs, activeTabId, setActiveTabId, handleCreateTab, handleClos
           );
         })}
         
-        <button className="new-tab-btn" onClick={handleCreateTab}>
+        <button className="new-tab-btn" onClick={handleCreateTab} title="New Tab">
           <Plus size={18} />
+        </button>
+        <button className="new-tab-btn" onClick={handleCreateEmailScannerTab} title="Open Email Scanner" style={{ marginLeft: '4px', backgroundColor: 'rgba(59, 130, 246, 0.1)' }}>
+          <Mail size={16} color="var(--accent-primary)" />
         </button>
       </div>
     </div>
