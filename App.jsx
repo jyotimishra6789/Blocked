@@ -16,7 +16,8 @@ function App() {
       url: 'bruhwser://home',
       inputValue: '',
       securityReport: analyzeUrl('bruhwser://home'),
-      bypassed: false
+      bypassed: false,
+      interceptStatus: 'completed'
     }
   ]);
   const [activeTabId, setActiveTabId] = useState(1);
@@ -27,16 +28,28 @@ function App() {
 
   const handleNavigate = async (url) => {
     let cleanUrl = url.trim();
-    if (!cleanUrl.startsWith('http')) {
+    if (!cleanUrl.startsWith('http') && !cleanUrl.startsWith('bruhwser://')) {
       cleanUrl = 'https://' + cleanUrl;
     }
     
+    // Intercept immediately
+    setTabs(currentTabs => currentTabs.map(t => 
+      t.id === activeTabId 
+        ? { ...t, url: cleanUrl, inputValue: cleanUrl, interceptStatus: 'intercepting', bypassed: false }
+        : t
+    ));
+
+    console.log(`[Network Interceptor] Request intercepted: ${cleanUrl}`);
+
+    // Wait ~800ms
+    await new Promise(resolve => setTimeout(resolve, 800));
+
     const report = analyzeUrl(cleanUrl);
     report.aiStatus = 'scanning';
     
-    setTabs(tabs.map(t => 
+    setTabs(currentTabs => currentTabs.map(t => 
       t.id === activeTabId 
-        ? { ...t, url: cleanUrl, inputValue: cleanUrl, securityReport: report, bypassed: false }
+        ? { ...t, securityReport: report, interceptStatus: 'completed' }
         : t
     ));
 
@@ -175,7 +188,14 @@ function App() {
           />
           
           <div className="browser-viewport">
-            {activeTab.securityReport && activeTab.securityReport.score <= 40 && !activeTab.bypassed ? (
+            {activeTab.interceptStatus === 'intercepting' ? (
+              <div className="interceptor-overlay">
+                <div className="radar-spinner" style={{ marginBottom: '1.5rem', borderColor: 'rgba(239, 68, 68, 0.2)', borderTopColor: 'var(--accent-danger)' }}></div>
+                <h2>Network Interceptor Engaging...</h2>
+                <p>Analyzing destination nodes, domain age, and structural signatures.</p>
+                <div className="scanning-bar"><div className="scanning-bar-fill"></div></div>
+              </div>
+            ) : activeTab.securityReport && activeTab.securityReport.score <= 40 && !activeTab.bypassed ? (
               <BlockedScreen 
                 url={activeTab.url}
                 report={activeTab.securityReport}

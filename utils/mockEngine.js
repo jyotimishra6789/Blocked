@@ -131,10 +131,11 @@ const levenshtein = (a, b) => {
 
 const topDomains = ['paypal.com', 'google.com', 'facebook.com', 'apple.com', 'amazon.com', 'microsoft.com'];
 const phishingKeywords = ['urgent', 'suspended', 'verify your identity', 'claim now', 'won', 'password required', 'unauthorized access'];
+const blacklistDomains = ['evil-scam.biz', 'crypto-win-now.net', 'steal-your-crypto.com']; // Explicit blacklist
 
 // Mock Analysis Engine
 export const analyzeUrl = (urlStr) => {
-  if (urlStr === 'bruhwser://home' || urlStr === '') {
+  if (urlStr === 'bruhwser://home' || urlStr === 'bruhwser://email-scanner' || urlStr === '') {
     return { score: 100, typosquatting: false, newDomain: false, age: 'N/A', phishingContent: false, flags: [] };
   }
 
@@ -161,6 +162,13 @@ export const analyzeUrl = (urlStr) => {
       typosquatPenalty = 50; 
       break;
     }
+  }
+
+  // 1.5 Blacklist Check
+  let isOnBlacklist = false;
+  if (blacklistDomains.includes(hostname)) {
+    isOnBlacklist = true;
+    typosquatPenalty += 75; // Heavy explicit penalty
   }
 
   // 2. Mock Content Analysis
@@ -214,6 +222,7 @@ export const analyzeUrl = (urlStr) => {
   score = Math.max(0, Math.min(100, score));
 
   let flags = [];
+  if (isOnBlacklist) flags.push(`Explicitly matched known malicious blacklist.`);
   if (isTyposquat) flags.push(`Looks similar to ${targetSafeDomain}`);
   if (hasPhishingContent) flags.push(`Found suspicious keywords: ${flaggedKeywords.join(', ')}`);
   if (isNewDomain) flags.push(`Very new domain (${ageStr})`);
