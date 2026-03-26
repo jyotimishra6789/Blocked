@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { AlertTriangle } from 'lucide-react';
 import TabBar from './components/TabBar';
 import AddressBar from './components/AddressBar';
 import ThreatPanel from './components/ThreatPanel';
@@ -69,7 +70,11 @@ function App() {
   const handleNavigate = async (url) => {
     let cleanUrl = url.trim();
     if (!cleanUrl.startsWith('http') && !cleanUrl.startsWith('bruhwser://')) {
-      cleanUrl = 'https://' + cleanUrl;
+      if (cleanUrl.includes('.') && !cleanUrl.includes(' ')) {
+        cleanUrl = 'https://' + cleanUrl;
+      } else {
+        cleanUrl = 'https://www.bing.com/search?q=' + encodeURIComponent(cleanUrl) + '&igu=1';
+      }
     }
     
     // Intercept immediately
@@ -228,7 +233,15 @@ function App() {
             privacyMode={privacyMode}
           />
           
-          <div className="browser-viewport">
+          <div className="browser-viewport" style={{display: 'flex', flexDirection: 'column'}}>
+            {activeTab.securityReport && activeTab.securityReport.score > 40 && activeTab.securityReport.score <= 80 && activeTab.interceptStatus === 'completed' && (
+              <div className="caution-banner animate-slide-down" style={{background: 'var(--accent-warning)', color: '#000', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '8px', zIndex: 10, fontSize: '0.9rem', fontWeight: 600}}>
+                <AlertTriangle size={18} />
+                <span>Caution: This site exhibits some suspicious indicators. Proceed carefully and do not enter sensitive information.</span>
+              </div>
+            )}
+            
+            <div style={{flex: 1, position: 'relative', overflow: 'hidden'}}>
             {activeTab.interceptStatus === 'intercepting' ? (
               <div className="interceptor-overlay">
                 <div className="radar-spinner" style={{ marginBottom: '1.5rem', borderColor: 'rgba(239, 68, 68, 0.2)', borderTopColor: 'var(--accent-danger)' }}></div>
@@ -328,17 +341,14 @@ function App() {
                 sandbox="allow-scripts allow-same-origin"
               />
             ) : (
-              <div className="error-page">
-                <h2>Site Not Found</h2>
-                <p>The mock engine does not have content for {activeTab.url}.</p>
-                <div style={{marginTop: '2rem'}}>
-                  Try: 
-                  <button onClick={() => handleNavigate('https://app.paypal.com/login')} className="demo-btn">Safe Site (paypal.com)</button>
-                  <button onClick={() => handleNavigate('https://app.palpal.com/login')} className="demo-btn danger">Phishing Site (palpal.com)</button>
-                  <button onClick={() => handleNavigate('https://crypto-win-now.net')} className="demo-btn warning">Scam Site (crypto-win-now.net)</button>
-                </div>
-              </div>
+              <iframe 
+                src={activeTab.url} 
+                className="mock-site-iframe" 
+                title="Real Site Content"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+              />
             )}
+            </div>
           </div>
         </div>
 
