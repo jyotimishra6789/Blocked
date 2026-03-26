@@ -1,0 +1,360 @@
+import React, { useState, useEffect } from 'react';
+import { AlertTriangle } from 'lucide-react';
+import TabBar from './components/TabBar';
+import AddressBar from './components/AddressBar';
+import ThreatPanel from './components/ThreatPanel';
+import Desktop from './components/Desktop';
+import BlockedScreen from './components/BlockedScreen';
+import EmailScanner from './components/EmailScanner';
+import { initialWebsites, analyzeUrl } from './utils/mockEngine';
+import { analyzeContentWithAI } from './utils/aiEngine';
+import { behavioralAnalysisScript } from './utils/behavioralAnalysis';
+import './App.css';
+
+function App() {
+  const [tabs, setTabs] = useState([
+    {
+      id: 1,
+      url: 'bruhwser://home',
+      inputValue: '',
+      securityReport: analyzeUrl('bruhwser://home'),
+      bypassed: false,
+      interceptStatus: 'completed'
+    }
+  ]);
+  const [activeTabId, setActiveTabId] = useState(1);
+  const [isThreatPanelOpen, setIsThreatPanelOpen] = useState(false);
+  const [privacyMode, setPrivacyMode] = useState(false);
+
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data?.type === 'BEHAVIOR_ALERT') {
+        const { behavior, message } = event.data;
+        
+        setTabs(currentTabs => {
+          const tIndex = currentTabs.findIndex(t => t.id === activeTabId);
+          if (tIndex === -1) return currentTabs;
+          
+          const t = currentTabs[tIndex];
+          let newScore = t.securityReport.score - 40;
+          newScore = Math.max(0, newScore);
+          
+          const newFlags = t.securityReport.behavioralFlags ? [...t.securityReport.behavioralFlags] : [];
+          if (!newFlags.includes(message)) {
+            newFlags.push(message);
+          }
+
+          const newReport = {
+            ...t.securityReport,
+            score: newScore,
+            behavioralFlags: newFlags
+          };
+
+          if (newScore < 50) {
+            setIsThreatPanelOpen(true);
+          }
+
+          const newTabs = [...currentTabs];
+          newTabs[tIndex] = { ...t, securityReport: newReport };
+          return newTabs;
+        });
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [activeTabId]);
+
+  const activeTab = tabs.find(t => t.id === activeTabId) || tabs[0];
+
+  const handleNavigate = async (url) => {
+    let cleanUrl = url.trim();
+    if (!cleanUrl.startsWith('http') && !cleanUrl.startsWith('bruhwser://')) {
+      if (cleanUrl.includes('.') && !cleanUrl.includes(' ')) {
+        cleanUrl = 'https://' + cleanUrl;
+      } else {
+        cleanUrl = 'https://www.bing.com/search?q=' + encodeURIComponent(cleanUrl) + '&igu=1';
+      }
+    }
+    
+    // Intercept immediately
+    setTabs(currentTabs => currentTabs.map(t => 
+      t.id === activeTabId 
+        ? { ...t, url: cleanUrl, inputValue: cleanUrl, interceptStatus: 'intercepting', bypassed: false }
+        : t
+    ));
+
+    console.log(`[Network Interceptor] Request intercepted: ${cleanUrl}`);
+
+    // Wait ~800ms
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    const report = analyzeUrl(cleanUrl);
+    report.aiStatus = 'scanning';
+    
+    setTabs(currentTabs => currentTabs.map(t => 
+      t.id === activeTabId 
+        ? { ...t, securityReport: report, interceptStatus: 'completed' }
+        : t
+    ));
+
+    if (report.score < 50) {
+      setIsThreatPanelOpen(true);
+    } else {
+      setIsThreatPanelOpen(false);
+    }
+
+    const siteMock = initialWebsites.find(site => site.url === cleanUrl);
+    const contentToScan = siteMock ? siteMock.content : '';
+    
+    if (contentToScan) {
+      const aiResult = await analyzeContentWithAI(cleanUrl, contentToScan);
+      
+      setTabs(currentTabs => currentTabs.map(t => {
+        if (t.id === activeTabId && t.url === cleanUrl) {
+          let newScore = t.securityReport.score;
+          
+          if (aiResult.classification === 'Scam') {
+            newScore = Math.min(newScore, Math.max(0, 100 - aiResult.confidenceScore));
+          } else if (aiResult.classification === 'Suspicious') {
+            newScore = Math.min(newScore, 60);
+          }
+
+          const newReport = {
+            ...t.securityReport,
+            score: newScore,
+            aiStatus: 'complete',
+            aiAnalysis: aiResult
+          };
+
+          if (newScore < 50) setIsThreatPanelOpen(true);
+
+          return {
+            ...t,
+            securityReport: newReport
+          };
+        }
+        return t;
+      }));
+    } else {
+      setTabs(currentTabs => currentTabs.map(t => {
+        if (t.id === activeTabId && t.url === cleanUrl) {
+          return {
+            ...t,
+            securityReport: {
+              ...t.securityReport,
+              aiStatus: 'complete',
+              aiAnalysis: { classification: 'Safe', explanation: 'No content to scan.', confidenceScore: 100 }
+            }
+          };
+        }
+        return t;
+      }));
+    }
+  };
+
+  const handleCreateTab = () => {
+    const newId = Date.now();
+    const defaultUrl = 'bruhwser://home';
+    const newTab = {
+      id: newId,
+      url: defaultUrl,
+      inputValue: '',
+      securityReport: analyzeUrl(defaultUrl),
+      bypassed: false
+    };
+    setTabs([...tabs, newTab]);
+    setActiveTabId(newId);
+    setIsThreatPanelOpen(false);
+  };
+
+  const handleCreateEmailScannerTab = () => {
+    const newId = Date.now();
+    const defaultUrl = 'bruhwser://email-scanner';
+    const newTab = {
+      id: newId,
+      url: defaultUrl,
+      inputValue: defaultUrl,
+      securityReport: { score: 100 },
+      bypassed: false
+    };
+    setTabs([...tabs, newTab]);
+    setActiveTabId(newId);
+    setIsThreatPanelOpen(false);
+  };
+
+  const handleCloseTab = (id) => {
+    if (tabs.length === 1) return; // Prevent closing the last tab
+    const newTabs = tabs.filter(t => t.id !== id);
+    setTabs(newTabs);
+    if (activeTabId === id) {
+      setActiveTabId(newTabs[newTabs.length - 1].id);
+    }
+  };
+
+  const setInputValue = (val) => {
+    setTabs(tabs.map(t => t.id === activeTabId ? { ...t, inputValue: val } : t));
+  };
+
+  const currentWebsiteMock = initialWebsites.find(site => site.url === activeTab.url);
+
+  return (
+    <Desktop>
+      <div className="browser-window glass-panel">
+        
+        {/* Window controls and Tabs */}
+        <TabBar 
+          tabs={tabs} 
+          activeTabId={activeTabId} 
+          setActiveTabId={setActiveTabId} 
+          handleCreateTab={handleCreateTab} 
+          handleCloseTab={handleCloseTab} 
+          handleCreateEmailScannerTab={handleCreateEmailScannerTab}
+        />
+
+        {/* Address Bar Area */}
+        <AddressBar 
+          inputValue={activeTab.inputValue} 
+          setInputValue={setInputValue} 
+          handleNavigate={handleNavigate}
+          report={activeTab.securityReport}
+          toggleThreatPanel={() => setIsThreatPanelOpen(!isThreatPanelOpen)}
+          privacyMode={privacyMode}
+          setPrivacyMode={setPrivacyMode}
+        />
+
+        {/* Main Viewport */}
+        <div className="browser-viewport-container">
+          {/* Threat Panel overlay/drawer */}
+          <ThreatPanel 
+            isOpen={isThreatPanelOpen} 
+            report={activeTab.securityReport} 
+            onClose={() => setIsThreatPanelOpen(false)} 
+            privacyMode={privacyMode}
+          />
+          
+          <div className="browser-viewport" style={{display: 'flex', flexDirection: 'column'}}>
+            {activeTab.securityReport && activeTab.securityReport.score > 40 && activeTab.securityReport.score <= 80 && activeTab.interceptStatus === 'completed' && (
+              <div className="caution-banner animate-slide-down" style={{background: 'var(--accent-warning)', color: '#000', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '8px', zIndex: 10, fontSize: '0.9rem', fontWeight: 600}}>
+                <AlertTriangle size={18} />
+                <span>Caution: This site exhibits some suspicious indicators. Proceed carefully and do not enter sensitive information.</span>
+              </div>
+            )}
+            
+            <div style={{flex: 1, position: 'relative', overflow: 'hidden'}}>
+            {activeTab.interceptStatus === 'intercepting' ? (
+              <div className="interceptor-overlay">
+                <div className="radar-spinner" style={{ marginBottom: '1.5rem', borderColor: 'rgba(239, 68, 68, 0.2)', borderTopColor: 'var(--accent-danger)' }}></div>
+                <h2>Network Interceptor Engaging...</h2>
+                <p>Analyzing destination nodes, domain age, and structural signatures.</p>
+                <div className="scanning-bar"><div className="scanning-bar-fill"></div></div>
+              </div>
+            ) : activeTab.securityReport && activeTab.securityReport.score <= 40 && !activeTab.bypassed ? (
+              <BlockedScreen 
+                url={activeTab.url}
+                report={activeTab.securityReport}
+                onGoBack={() => handleNavigate('bruhwser://home')}
+                onProceed={() => setTabs(tabs.map(t => t.id === activeTabId ? { ...t, bypassed: true } : t))}
+              />
+            ) : activeTab.url === 'bruhwser://email-scanner' ? (
+              <EmailScanner />
+            ) : currentWebsiteMock ? (
+              <iframe 
+                srcDoc={
+                  privacyMode 
+                    ? `
+                      <script>
+                        (function() {
+                          const r = Math.floor(Math.random() * 10000);
+                          const spoofedUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 BruhwserPrivacy/' + r;
+                          const spoofedPlatform = 'Win32-' + r;
+                          const spoofedLanguage = 'en-US-' + r;
+                          
+                          // Basic Overrides
+                          Object.defineProperty(navigator, 'userAgent', { get: () => spoofedUserAgent });
+                          Object.defineProperty(navigator, 'platform', { get: () => spoofedPlatform });
+                          Object.defineProperty(navigator, 'language', { get: () => spoofedLanguage });
+                          
+                          // Active Deception: Memory & Screen
+                          const spoofedMemory = [2, 4, 8, 16][Math.floor(Math.random() * 4)];
+                          Object.defineProperty(navigator, 'deviceMemory', { get: () => spoofedMemory });
+                          
+                          const screenWidth = [1366, 1440, 1920, 2560][Math.floor(Math.random() * 4)];
+                          const screenHeight = [768, 900, 1080, 1440][Math.floor(Math.random() * 4)];
+                          Object.defineProperty(window.screen, 'width', { get: () => screenWidth });
+                          Object.defineProperty(window.screen, 'height', { get: () => screenHeight });
+                          Object.defineProperty(window.screen, 'colorDepth', { get: () => 24 });
+                          Object.defineProperty(window.screen, 'pixelDepth', { get: () => 24 });
+
+                          // Active Deception: Canvas Noise Injection
+                          const originalToDataURL = HTMLCanvasElement.prototype.toDataURL;
+                          HTMLCanvasElement.prototype.toDataURL = function() {
+                            const ctx = this.getContext('2d');
+                            if (ctx) {
+                              ctx.fillStyle = \`rgba(\${Math.floor(Math.random() * 255)}, \${Math.floor(Math.random() * 255)}, \${Math.floor(Math.random() * 255)}, 0.01)\`;
+                              ctx.fillRect(0, 0, 1, 1);
+                            }
+                            return originalToDataURL.apply(this, arguments);
+                          };
+
+                          const originalGetImageData = CanvasRenderingContext2D.prototype.getImageData;
+                          CanvasRenderingContext2D.prototype.getImageData = function() {
+                            const imageData = originalGetImageData.apply(this, arguments);
+                            if (imageData && imageData.data && imageData.data.length > 0) {
+                              imageData.data[0] = (imageData.data[0] + Math.floor(Math.random() * 3)) % 255;
+                            }
+                            return imageData;
+                          };
+
+                          // Active Deception: AudioContext Variation
+                          const AudioContext = window.AudioContext || window.webkitAudioContext;
+                          if (AudioContext) {
+                            const originalCreateOscillator = AudioContext.prototype.createOscillator;
+                            AudioContext.prototype.createOscillator = function() {
+                              const oscillator = originalCreateOscillator.apply(this, arguments);
+                              const originalStart = oscillator.start;
+                              oscillator.start = function() {
+                                this.frequency.value = this.frequency.value + (Math.random() * 0.001);
+                                return originalStart.apply(this, arguments);
+                              };
+                              return oscillator;
+                            };
+                          }
+
+                          console.log('[Privacy Mode] Active Deception Engine Enabled:', {
+                            userAgent: navigator.userAgent,
+                            platform: navigator.platform,
+                            deviceMemory: navigator.deviceMemory,
+                            screenResolution: \`\${window.screen.width}x\${window.screen.height}\`,
+                            canvasSpoofed: true,
+                            audioSpoofed: true
+                          });
+                        })();
+                      </script>
+                      <script>${behavioralAnalysisScript}</script>
+                      ${currentWebsiteMock.content}
+                    `
+                    : `<script>${behavioralAnalysisScript}</script>${currentWebsiteMock.content}`
+                } 
+                className="mock-site-iframe" 
+                title="Mock Site Content"
+                sandbox="allow-scripts allow-same-origin"
+              />
+            ) : (
+              <iframe 
+                src={activeTab.url} 
+                className="mock-site-iframe" 
+                title="Real Site Content"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+              />
+            )}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </Desktop>
+  );
+}
+
+export default App;

@@ -1,0 +1,176 @@
+.os-environment {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.browser-window {
+  width: 100%;
+  max-width: 1400px;
+  flex: 1;
+  min-height: 0;
+  max-height: 900px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.browser-viewport-container {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff; /* Default background for web contents is white */
+  overflow: hidden;
+  min-height: 0;
+}
+
+.browser-viewport {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  color: #1a1a20; /* Default text color for web contents */
+  min-height: 0;
+}
+
+.mock-site-content, .mock-site-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.error-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.interceptor-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.interceptor-overlay h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--accent-danger);
+  animation: pulse-danger 2s infinite;
+}
+
+.interceptor-overlay p {
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.scanning-bar {
+  width: 300px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.scanning-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 50%;
+  background: var(--accent-danger);
+  animation: scanning-slide 1s ease-in-out infinite alternate;
+}
+
+@keyframes scanning-slide {
+  from { transform: translateX(-10%); }
+  to { transform: translateX(110%); }
+}
+
+.demo-btn {
+  margin: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background: var(--accent-primary);
+  color: white;
+  font-weight: 500;
+}
+
+.demo-btn.danger {
+  background: var(--accent-danger);
+}
+
+.demo-btn.warning {
+  background: var(--accent-warning);
+}
+
+/* Base styles for the fake websites */
+.mock-banking-app {
+  font-family: -apple-system, system-ui, sans-serif;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+}
+
+.mock-login-box {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  width: 400px;
+  text-align: center;
+}
+
+.mock-input {
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+.mock-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: #0070ba;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.mock-urgent-banner {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  border: 1px solid #f87171;
+  animation: pulse-danger 2s infinite;
+}

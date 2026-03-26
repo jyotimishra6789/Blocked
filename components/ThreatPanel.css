@@ -1,0 +1,189 @@
+.threat-panel {
+  position: absolute;
+  top: 1rem;
+  right: -350px;
+  width: 320px;
+  max-height: calc(100% - 2rem);
+  background: #000000;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 100;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.threat-panel.open {
+  right: 1rem;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-title h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.close-btn {
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.panel-content {
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Circular Chart */
+.score-section {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.circular-chart {
+  display: block;
+  margin: 0;
+  max-width: 80px;
+  max-height: 80px;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 3.8;
+}
+
+.circle {
+  fill: none;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  animation: progress 1s ease-out forwards;
+}
+
+@keyframes progress {
+  0% {
+    stroke-dasharray: 0 100;
+  }
+}
+
+.percentage {
+  fill: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.score-text h4 {
+  font-size: 1rem;
+  margin: 0 0 0.25rem 0;
+}
+
+.score-text p {
+  font-size: 0.85rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background: var(--border-color);
+  margin: 0;
+}
+
+.breakdown-section h4 {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 1rem 0;
+}
+
+.metric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.metric-icon {
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metric-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-title {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.metric-status {
+  font-size: 0.8rem;
+}
+
+.safe-text {
+  color: var(--accent-success);
+}
+
+.danger-text {
+  color: var(--accent-danger);
+}
+
+.warning-box {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.warning-box p {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
