@@ -1,5 +1,64 @@
 export const initialWebsites = [
   {
+    url: 'https://amazon.com',
+    content: `
+      <div style="font-family: 'Amazon Ember', Arial, sans-serif; background-color: #e3e6e6; color: #0f1111; min-height: 100vh;">
+        <!-- Header -->
+        <header style="background-color: #131921; color: white; padding: 10px 20px; display: flex; align-items: center; gap: 20px;">
+          <h2 style="margin: 0; font-size: 1.5rem; font-weight: bold; color: white;">amazon</h2>
+          <div style="flex: 1; display: flex;">
+            <input type="text" placeholder="Search Amazon" style="flex: 1; padding: 10px; border: none; border-radius: 4px 0 0 4px; outline: none; font-size: 1rem;" />
+            <button style="background-color: #febd69; border: none; padding: 10px 20px; border-radius: 0 4px 4px 0; cursor: pointer; font-size: 1rem;">🔍</button>
+          </div>
+          <div style="display: flex; gap: 15px; font-size: 0.9rem;">
+            <div>Hello, sign in<br/><b>Account & Lists</b></div>
+            <div>Returns<br/><b>& Orders</b></div>
+            <div style="font-size: 1.2rem; display: flex; align-items: center;">🛒 <b style="font-size: 1rem; margin-left: 4px;">0</b></div>
+          </div>
+        </header>
+        
+        <!-- Sub Header -->
+        <div style="background-color: #232f3e; color: white; padding: 5px 20px; font-size: 0.9rem; display: flex; gap: 15px;">
+          <span style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-weight: bold;">☰ All</span>
+          <span style="cursor: pointer;">Today's Deals</span>
+          <span style="cursor: pointer;">Customer Service</span>
+          <span style="cursor: pointer;">Registry</span>
+          <span style="cursor: pointer;">Gift Cards</span>
+          <span style="cursor: pointer;">Sell</span>
+        </div>
+
+        <!-- Main Content -->
+        <div style="padding: 20px; max-width: 1400px; margin: 0 auto; display: flex; gap: 20px; flex-wrap: wrap;">
+          <div style="background: white; padding: 20px; flex: 1; min-width: 280px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="margin-top: 0;">Keep shopping for</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div style="background: #f8f8f8; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #555;">⌚</div>
+              <div style="background: #f8f8f8; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #555;">💻</div>
+              <div style="background: #f8f8f8; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #555;">🎧</div>
+              <div style="background: #f8f8f8; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #555;">📱</div>
+            </div>
+            <a href="#" style="color: #007185; display: block; margin-top: 15px; text-decoration: none;">View your browsing history</a>
+          </div>
+
+          <div style="background: white; padding: 20px; flex: 1; min-width: 280px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="margin-top: 0;">Gaming accessories</h3>
+            <div style="background: #f8f8f8; height: 250px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #555;">🎮</div>
+            <a href="#" style="color: #007185; display: block; margin-top: 15px; text-decoration: none;">See more</a>
+          </div>
+
+          <div style="background: white; padding: 20px; flex: 1; min-width: 280px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="margin-top: 0;">Top Deal</h3>
+            <div style="background: #f8f8f8; height: 180px; border-radius: 4px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #555;">📺</div>
+            <span style="background: #cc0c39; color: white; padding: 4px 8px; border-radius: 2px; font-size: 0.8rem; font-weight: bold;">Up to 40% off</span>
+            <span style="color: #cc0c39; font-weight: bold; font-size: 0.8rem; margin-left: 10px;">Top deal</span>
+            <div style="margin-top: 8px; font-size: 0.9rem;">Electronics & Gadgets</div>
+            <a href="#" style="color: #007185; display: block; margin-top: 15px; text-decoration: none;">See all deals</a>
+          </div>
+        </div>
+      </div>
+    `,
+  },
+  {
     url: 'https://app.paypal.com/login',
     content: `
       <div style="font-family: Arial, sans-serif; background-color: #f5f7fa; color: #333; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
