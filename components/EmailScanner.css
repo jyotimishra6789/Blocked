@@ -1,6 +1,8 @@
 .email-scanner-container {
   padding: 2rem 4rem;
-  min-height: 100%;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
   box-sizing: border-box;
   color: var(--text-primary);
   background: var(--bg-primary);

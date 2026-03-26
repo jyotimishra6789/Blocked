@@ -10,7 +10,8 @@
 .browser-window {
   width: 100%;
   max-width: 1400px;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   max-height: 900px;
   border-radius: 12px;
   display: flex;
@@ -26,6 +27,7 @@
   flex: 1;
   position: relative;
   display: flex;
+  flex-direction: column;
   background: #ffffff; /* Default background for web contents is white */
   overflow: hidden;
   min-height: 0;
@@ -35,6 +37,8 @@
   flex: 1;
   overflow-y: auto;
   position: relative;
+  display: flex;
+  flex-direction: column;
   color: #1a1a20; /* Default text color for web contents */
   min-height: 0;
 }

@@ -4,7 +4,7 @@
   right: -350px;
   width: 320px;
   max-height: calc(100% - 2rem);
-  /* background: var(--bg-tertiary); removed for glassmorphism */
+  background: #000000;
   border: 1px solid var(--border-color);
   border-radius: 12px;
   display: flex;
