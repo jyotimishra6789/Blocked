@@ -62,6 +62,13 @@ export const analyzeContentWithAI = async (url, content) => {
           explanation = "The page uses typical scam tropes involving unexpected huge rewards and forced deadlines.";
           urgency = true;
           rewards = true;
+        } else if (lowerContent.includes("verify") || lowerContent.includes("unusual")) {
+          classification = "Suspicious";
+          confidenceScore = 75;
+          explanation = "The page asks for verification, which is common but warrants caution on unknown domains.";
+          urgency = false;
+          fear = false;
+          rewards = false;
         }
 
         resolve({

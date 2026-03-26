@@ -1,5 +1,18 @@
 export const initialWebsites = [
   {
+    url: 'https://portal-verify.com',
+    content: `
+      <div style="font-family: Arial, sans-serif; background-color: #f3f4f6; color: #111827; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center; border-top: 5px solid #eab308;">
+          <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 1rem; color: #1f2937;">Identity Verification</h2>
+          <p style="color: #4b5563; margin-bottom: 2rem; line-height: 1.5;">We noticed a login attempt from an unusual device. Please verify your identity to secure your account and access the portal.</p>
+          <input type="text" placeholder="Account Email" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; font-size: 1rem;" />
+          <button style="width: 100%; padding: 1rem; background: #eab308; color: white; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer;">Secure Account</button>
+        </div>
+      </div>
+    `,
+  },
+  {
     url: 'https://amazon.com',
     content: `
       <div style="font-family: 'Amazon Ember', Arial, sans-serif; background-color: #e3e6e6; color: #0f1111; min-height: 100vh;">
