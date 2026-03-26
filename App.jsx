@@ -225,6 +225,7 @@ function App() {
             isOpen={isThreatPanelOpen} 
             report={activeTab.securityReport} 
             onClose={() => setIsThreatPanelOpen(false)} 
+            privacyMode={privacyMode}
           />
           
           <div className="browser-viewport">

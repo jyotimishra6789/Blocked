@@ -1,8 +1,14 @@
-import React from 'react';
-import { ShieldAlert, ShieldCheck, X, AlertOctagon, Activity, Search, AlertTriangle, Shield, CheckCircle, Smartphone, Fingerprint, EyeOff, Info } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShieldAlert, ShieldCheck, X, AlertOctagon, Activity, Search, AlertTriangle, Shield, CheckCircle, Smartphone, Fingerprint, EyeOff, Info, Lock, ToggleLeft, ToggleRight } from 'lucide-react';
 import './ThreatPanel.css';
 
-const ThreatPanel = ({ isOpen, report, onClose }) => {
+const ThreatPanel = ({ isOpen, report, onClose, privacyMode }) => {
+  const [showSpoofedPreview, setShowSpoofedPreview] = useState(false);
+
+  // Sync preview toggle with privacyMode when it changes
+  useEffect(() => {
+    setShowSpoofedPreview(privacyMode);
+  }, [privacyMode]);
   if (!isOpen || !report) return null;
 
   const getScoreColor = (score) => {
@@ -123,6 +129,76 @@ const ThreatPanel = ({ isOpen, report, onClose }) => {
               ) : (
                 <span className="metric-status safe-text">No anomalous scripts detected</span>
               )}
+            </div>
+          </div>
+        </div>
+
+        <hr className="divider" />
+
+        {/* Anti-Fingerprinting Section */}
+        <div className="breakdown-section">
+          <h4>Privacy Protection</h4>
+          
+          <div className="metric-item">
+            <div className="metric-icon"><Lock size={16} color={privacyMode ? "var(--accent-success)" : "var(--text-muted)"}/></div>
+            <div className="metric-info" style={{width: '100%'}}>
+              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px'}}>
+                <span className="metric-title">Fingerprint Spoofing</span>
+                <span className={`score-pill ${privacyMode ? 'score-pill-safe' : 'score-pill-danger'}`} style={{fontSize: '0.65rem', margin: 0, padding: '2px 6px'}}>
+                  {privacyMode ? 'Active' : 'Disabled'}
+                </span>
+              </div>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '0 0 10px 0' }}>
+                {privacyMode ? 'Device identity randomized. Tracking signals obfuscated.' : 'Real device fingerprint is exposed to trackers.'}
+              </p>
+              
+              {/* Detailed Toggles */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.8rem', marginBottom: '16px' }}>
+                <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
+                  {privacyMode ? <CheckCircle size={14} color="var(--accent-success)"/> : <AlertTriangle size={14} color="var(--accent-danger)"/>}
+                  <span style={{color: privacyMode ? 'var(--text-primary)' : 'var(--text-muted)'}}>Canvas Protection: {privacyMode ? 'Enabled' : 'Disabled'}</span>
+                </div>
+                <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
+                  {privacyMode ? <CheckCircle size={14} color="var(--accent-success)"/> : <AlertTriangle size={14} color="var(--accent-danger)"/>}
+                  <span style={{color: privacyMode ? 'var(--text-primary)' : 'var(--text-muted)'}}>Audio Masking: {privacyMode ? 'Enabled' : 'Disabled'}</span>
+                </div>
+                <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
+                  {privacyMode ? <CheckCircle size={14} color="var(--accent-success)"/> : <AlertTriangle size={14} color="var(--accent-danger)"/>}
+                  <span style={{color: privacyMode ? 'var(--text-primary)' : 'var(--text-muted)'}}>User-Agent Masking: {privacyMode ? 'Active' : 'Exposed'}</span>
+                </div>
+              </div>
+
+              {/* Before vs After Preview */}
+              <div style={{background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '8px', overflow: 'hidden'}}>
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', borderBottom: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.2)'}}>
+                  <span style={{fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-secondary)'}}>Tracker View</span>
+                  <div onClick={() => setShowSpoofedPreview(!showSpoofedPreview)} style={{cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px'}}>
+                    <span style={{fontSize: '0.7rem', color: showSpoofedPreview ? 'var(--text-muted)' : 'var(--text-primary)', fontWeight: !showSpoofedPreview ? 600 : 400}}>REAL</span>
+                    {showSpoofedPreview ? <ToggleRight size={20} color="var(--accent-primary)"/> : <ToggleLeft size={20} color="var(--text-muted)"/>}
+                    <span style={{fontSize: '0.7rem', color: showSpoofedPreview ? 'var(--accent-primary)' : 'var(--text-muted)', fontWeight: showSpoofedPreview ? 600 : 400}}>SPOOFED</span>
+                  </div>
+                </div>
+                <div style={{fontFamily: 'monospace', fontSize: '0.75rem', color: showSpoofedPreview ? 'var(--accent-warning)' : 'var(--accent-danger)', background: 'rgba(0,0,0,0.4)', padding: '12px', display: 'flex', flexDirection: 'column', gap: '4px'}}>
+                  {showSpoofedPreview ? (
+                    <>
+                      <div><span style={{color: 'var(--text-muted)'}}>OS:</span> MacOS 14.2</div>
+                      <div><span style={{color: 'var(--text-muted)'}}>Browser:</span> Firefox 122.0</div>
+                      <div><span style={{color: 'var(--text-muted)'}}>Screen:</span> 1366x768</div>
+                      <div><span style={{color: 'var(--text-muted)'}}>Canvas Hash:</span> <span style={{color: 'var(--accent-success)'}}>9a3f28b... (Random Noise)</span></div>
+                      <div><span style={{color: 'var(--text-muted)'}}>Audio Hash:</span> <span style={{color: 'var(--accent-success)'}}>44b1c9x... (Obfuscated)</span></div>
+                    </>
+                  ) : (
+                    <>
+                      <div><span style={{color: 'var(--text-muted)'}}>OS:</span> Windows 11</div>
+                      <div><span style={{color: 'var(--text-muted)'}}>Browser:</span> Chrome 120.0</div>
+                      <div><span style={{color: 'var(--text-muted)'}}>Screen:</span> 1920x1080</div>
+                      <div><span style={{color: 'var(--text-muted)'}}>Canvas Hash:</span> 7ef839a... (True Device)</div>
+                      <div><span style={{color: 'var(--text-muted)'}}>Audio Hash:</span> 11a9f0b... (True Device)</div>
+                    </>
+                  )}
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
