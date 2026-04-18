@@ -36,8 +36,8 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-y: auto;
   background-image: 
     radial-gradient(ellipse at 50% -20%, rgba(59, 130, 246, 0.15), transparent 60%),
     radial-gradient(ellipse at 80% 80%, rgba(239, 68, 68, 0.05), transparent 50%);

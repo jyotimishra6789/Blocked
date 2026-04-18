@@ -1,10 +1,11 @@
 .os-environment {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem;
+  overflow-y: auto;
 }
 
 .browser-window {
@@ -31,6 +32,7 @@
   background: #ffffff; /* Default background for web contents is white */
   overflow: hidden;
   min-height: 0;
+  height: 100%;
 }
 
 .browser-viewport {
@@ -41,6 +43,7 @@
   flex-direction: column;
   color: #1a1a20; /* Default text color for web contents */
   min-height: 0;
+  height: 100%;
 }
 
 .mock-site-content, .mock-site-iframe {
@@ -48,6 +51,7 @@
   height: 100%;
   border: none;
   display: block;
+  flex: 1;
 }
 
 .error-page {

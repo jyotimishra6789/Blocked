@@ -233,7 +233,7 @@ function App() {
             privacyMode={privacyMode}
           />
           
-          <div className="browser-viewport" style={{display: 'flex', flexDirection: 'column'}}>
+          <div className="browser-viewport" style={{display: 'flex', flexDirection: 'column', minHeight: 0}}>
             {activeTab.securityReport && activeTab.securityReport.score > 40 && activeTab.securityReport.score <= 80 && activeTab.interceptStatus === 'completed' && (
               <div className="caution-banner animate-slide-down" style={{background: 'var(--accent-warning)', color: '#000', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '8px', zIndex: 10, fontSize: '0.9rem', fontWeight: 600}}>
                 <AlertTriangle size={18} />
@@ -241,7 +241,7 @@ function App() {
               </div>
             )}
             
-            <div style={{flex: 1, position: 'relative', overflow: 'hidden'}}>
+            <div style={{flex: 1, position: 'relative', overflow: 'auto', display: 'flex', flexDirection: 'column', minHeight: 0, height: '100%'}}>
             {activeTab.interceptStatus === 'intercepting' ? (
               <div className="interceptor-overlay">
                 <div className="radar-spinner" style={{ marginBottom: '1.5rem', borderColor: 'rgba(239, 68, 68, 0.2)', borderTopColor: 'var(--accent-danger)' }}></div>
