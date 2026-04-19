@@ -4,7 +4,7 @@ Bruhwser is an advanced, privacy-first cybersecurity browser simulator designed 
 
 ---
 
-## 🚀 Newly Integrated Hackathon Features
+## 🚀 Newly Integrated Features
 
 We have supercharged Bruhwser with 10 powerful new features focused on advanced threat analysis and forensics:
 
