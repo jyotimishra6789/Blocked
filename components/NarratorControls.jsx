@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
-import { narrateThreat, stopNarration, isNarrating } from '../utils/threatNarrator';
+import { narrateThreat, stopNarration, isNarrating } from './threatNarrator';
 
 /**
  * NarratorControls — drop this next to the privacy toggle in AddressBar.
