@@ -29,7 +29,7 @@ const Desktop = ({ children }) => {
         </div>
         <div className="taskbar-apps">
           <div className="taskbar-app active">
-            <Monitor size={18} className="app-icon" />
+            <img src="/logo.png" className="app-icon" alt="Bruhwser Logo" style={{ width: 18, height: 18, objectFit: 'contain' }} />
             <span>Bruhwser</span>
           </div>
         </div>
