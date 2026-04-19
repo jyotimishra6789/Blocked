@@ -1,8 +1,8 @@
 import React from 'react';
-import { Plus, X, ShieldAlert, ShieldCheck, Shield, Mail } from 'lucide-react';
+import { Plus, X, ShieldAlert, ShieldCheck, Shield, Mail, Fingerprint, Swords } from 'lucide-react';
 import './TabBar.css';
 
-const TabBar = ({ tabs, activeTabId, setActiveTabId, handleCreateTab, handleCloseTab, handleCreateEmailScannerTab }) => {
+const TabBar = ({ tabs, activeTabId, setActiveTabId, handleCreateTab, handleCloseTab, handleCreateEmailScannerTab, handleCreateFootprintTab, handleCreateRedTeamTab }) => {
   return (
     <div className="tab-bar">
       {/* Mac-style Window Controls */}
@@ -62,6 +62,12 @@ const TabBar = ({ tabs, activeTabId, setActiveTabId, handleCreateTab, handleClos
         </button>
         <button className="new-tab-btn" onClick={handleCreateEmailScannerTab} title="Open Email Scanner" style={{ marginLeft: '4px', backgroundColor: 'rgba(59, 130, 246, 0.1)' }}>
           <Mail size={16} color="var(--accent-primary)" />
+        </button>
+        <button className="new-tab-btn" onClick={handleCreateFootprintTab} title="Digital Footprint Estimator" style={{ marginLeft: '4px', backgroundColor: 'rgba(168, 85, 247, 0.1)' }}>
+          <Fingerprint size={16} color="var(--accent-secondary)" />
+        </button>
+        <button className="new-tab-btn" onClick={handleCreateRedTeamTab} title="Red Team Mode" style={{ marginLeft: '4px', backgroundColor: 'rgba(239, 68, 68, 0.1)' }}>
+          <Swords size={16} color="var(--accent-danger)" />
         </button>
       </div>
     </div>

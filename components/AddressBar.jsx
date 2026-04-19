@@ -1,8 +1,9 @@
 import React from 'react';
-import { ArrowLeft, ArrowRight, RotateCw, ShieldAlert, ShieldCheck, Info, EyeOff, Eye } from 'lucide-react';
+import { ArrowLeft, ArrowRight, RotateCw, ShieldAlert, ShieldCheck, Info, EyeOff, Eye, Scissors } from 'lucide-react';
+import NarratorControls from './NarratorControls';
 import './AddressBar.css';
 
-const AddressBar = ({ inputValue, setInputValue, handleNavigate, report, toggleThreatPanel, privacyMode, setPrivacyMode }) => {
+const AddressBar = ({ inputValue, setInputValue, handleNavigate, report, toggleThreatPanel, privacyMode, setPrivacyMode, handleCreateUrlDissectorTab }) => {
   const onKeyDown = (e) => {
     if (e.key === 'Enter') {
       handleNavigate(inputValue);
@@ -49,6 +50,10 @@ const AddressBar = ({ inputValue, setInputValue, handleNavigate, report, toggleT
         {privacyMode && (
           <div className="deception-label">Active Deception Enabled</div>
         )}
+        <NarratorControls report={report} url={inputValue} autoNarrate={true} />
+        <button className="nav-btn" onClick={() => handleCreateUrlDissectorTab(inputValue)} title="Dissect URL">
+          <Scissors size={18} />
+        </button>
         <button 
           className={`nav-btn privacy-toggle ${privacyMode ? 'active' : ''}`} 
           onClick={() => setPrivacyMode(!privacyMode)} 

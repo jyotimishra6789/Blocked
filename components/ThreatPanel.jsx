@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldAlert, ShieldCheck, X, AlertOctagon, Activity, Search, AlertTriangle, Shield, CheckCircle, Smartphone, Fingerprint, EyeOff, Info, Lock, ToggleLeft, ToggleRight } from 'lucide-react';
+import ThreatDNA from './ThreatDNA';
+import AttackMap from './AttackMap';
+import ShareReportButton from './ShareReportButton';
+import TrackerInspector from './TrackerInspector';
 import './ThreatPanel.css';
 
-const ThreatPanel = ({ isOpen, report, onClose, privacyMode }) => {
+const ThreatPanel = ({ isOpen, report, onClose, privacyMode, url, threatHistory }) => {
   const [showSpoofedPreview, setShowSpoofedPreview] = useState(false);
 
   // Sync preview toggle with privacyMode when it changes
@@ -134,6 +138,10 @@ const ThreatPanel = ({ isOpen, report, onClose, privacyMode }) => {
         </div>
 
         <hr className="divider" />
+        <ThreatDNA url={url} report={report} />
+        <TrackerInspector url={url} />
+        <AttackMap threats={threatHistory || []} />
+        <hr className="divider" />
 
         {/* Anti-Fingerprinting Section */}
         <div className="breakdown-section">
@@ -209,6 +217,8 @@ const ThreatPanel = ({ isOpen, report, onClose, privacyMode }) => {
             <p><strong>Warning:</strong> The requested URL resembles a known service but leads to a highly suspicious domain. Do not enter credentials.</p>
           </div>
         )}
+
+        <ShareReportButton report={report} url={url} />
       </div>
     </div>
   );
