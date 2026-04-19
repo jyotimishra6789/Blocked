@@ -9,6 +9,12 @@ import EmailScanner from './components/EmailScanner';
 import { initialWebsites, analyzeUrl } from './utils/mockEngine';
 import { analyzeContentWithAI } from './utils/aiEngine';
 import { behavioralAnalysisScript } from './utils/behavioralAnalysis';
+import ReplayPlayer, { useReplayRecorder } from './components/ReplayMode';
+import { Circle, StopCircle } from 'lucide-react';
+import SocialEngineeringChat from './components/SocialEngineeringChat';
+import FootprintEstimator from './components/FootprintEstimator';
+import UrlDissector from './components/UrlDissector';
+import RedTeamMode from './components/RedTeamMode';
 import './App.css';
 
 function App() {
@@ -25,6 +31,9 @@ function App() {
   const [activeTabId, setActiveTabId] = useState(1);
   const [isThreatPanelOpen, setIsThreatPanelOpen] = useState(false);
   const [privacyMode, setPrivacyMode] = useState(false);
+  const { events, recording, startRecording, stopRecording, recordEvent } = useReplayRecorder();
+  const [showReplay, setShowReplay] = useState(false);
+  const [threatHistory, setThreatHistory] = useState([]);
 
   useEffect(() => {
     const handleMessage = (event) => {
@@ -91,6 +100,9 @@ function App() {
 
     const report = analyzeUrl(cleanUrl);
     report.aiStatus = 'scanning';
+    
+    recordEvent(cleanUrl, report);
+    setThreatHistory(prev => [...prev, { url: cleanUrl, score: report.score }]);
     
     setTabs(currentTabs => currentTabs.map(t => 
       t.id === activeTabId 
@@ -183,6 +195,45 @@ function App() {
     setIsThreatPanelOpen(false);
   };
 
+  const handleCreateFootprintTab = () => {
+    const newId = Date.now();
+    setTabs([...tabs, {
+      id: newId,
+      url: 'bruhwser://footprint',
+      inputValue: 'bruhwser://footprint',
+      securityReport: { score: 100 },
+      bypassed: false
+    }]);
+    setActiveTabId(newId);
+    setIsThreatPanelOpen(false);
+  };
+
+  const handleCreateUrlDissectorTab = (initialUrl) => {
+    const newId = Date.now();
+    setTabs([...tabs, {
+      id: newId,
+      url: 'bruhwser://dissector',
+      inputValue: typeof initialUrl === 'string' ? initialUrl : 'bruhwser://dissector',
+      securityReport: { score: 100 },
+      bypassed: false
+    }]);
+    setActiveTabId(newId);
+    setIsThreatPanelOpen(false);
+  };
+
+  const handleCreateRedTeamTab = () => {
+    const newId = Date.now();
+    setTabs([...tabs, {
+      id: newId,
+      url: 'bruhwser://redteam',
+      inputValue: 'bruhwser://redteam',
+      securityReport: { score: 100 },
+      bypassed: false
+    }]);
+    setActiveTabId(newId);
+    setIsThreatPanelOpen(false);
+  };
+
   const handleCloseTab = (id) => {
     if (tabs.length === 1) return; // Prevent closing the last tab
     const newTabs = tabs.filter(t => t.id !== id);
@@ -210,6 +261,8 @@ function App() {
           handleCreateTab={handleCreateTab} 
           handleCloseTab={handleCloseTab} 
           handleCreateEmailScannerTab={handleCreateEmailScannerTab}
+          handleCreateFootprintTab={handleCreateFootprintTab}
+          handleCreateRedTeamTab={handleCreateRedTeamTab}
         />
 
         {/* Address Bar Area */}
@@ -221,7 +274,17 @@ function App() {
           toggleThreatPanel={() => setIsThreatPanelOpen(!isThreatPanelOpen)}
           privacyMode={privacyMode}
           setPrivacyMode={setPrivacyMode}
+          handleCreateUrlDissectorTab={handleCreateUrlDissectorTab}
         />
+
+        <div style={{display: 'flex', gap: '16px', padding: '6px 16px', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', fontSize: '0.85rem'}}>
+          <button onClick={recording ? stopRecording : startRecording} style={{background: 'none', border: 'none', color: recording ? 'var(--accent-danger)' : 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600}}>
+            {recording ? <StopCircle size={16} /> : <Circle size={16} />} {recording ? 'Recording Mode Active' : 'Start Replay Recording'}
+          </button>
+          <button onClick={() => setShowReplay(true)} disabled={events.length === 0} style={{background: 'none', border: 'none', color: events.length === 0 ? 'var(--text-muted)' : 'var(--accent-primary)', cursor: 'pointer', fontWeight: 600}}>
+            Show Replay
+          </button>
+        </div>
 
         {/* Main Viewport */}
         <div className="browser-viewport-container">
@@ -231,9 +294,14 @@ function App() {
             report={activeTab.securityReport} 
             onClose={() => setIsThreatPanelOpen(false)} 
             privacyMode={privacyMode}
+            url={activeTab.url}
+            threatHistory={threatHistory}
           />
           
           <div className="browser-viewport" style={{display: 'flex', flexDirection: 'column', minHeight: 0}}>
+            {showReplay && events.length > 0 && (
+              <ReplayPlayer events={events} onClose={() => setShowReplay(false)} />
+            )}
             {activeTab.securityReport && activeTab.securityReport.score > 40 && activeTab.securityReport.score <= 80 && activeTab.interceptStatus === 'completed' && (
               <div className="caution-banner animate-slide-down" style={{background: 'var(--accent-warning)', color: '#000', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '8px', zIndex: 10, fontSize: '0.9rem', fontWeight: 600}}>
                 <AlertTriangle size={18} />
@@ -258,7 +326,14 @@ function App() {
               />
             ) : activeTab.url === 'bruhwser://email-scanner' ? (
               <EmailScanner />
+            ) : activeTab.url === 'bruhwser://footprint' ? (
+              <FootprintEstimator privacyMode={privacyMode} />
+            ) : activeTab.url === 'bruhwser://dissector' ? (
+              <UrlDissector initialUrl={activeTab.inputValue} />
+            ) : activeTab.url === 'bruhwser://redteam' ? (
+              <RedTeamMode />
             ) : currentWebsiteMock ? (
+              <>
               <iframe 
                 srcDoc={
                   privacyMode 
@@ -340,6 +415,10 @@ function App() {
                 title="Mock Site Content"
                 sandbox="allow-scripts allow-same-origin"
               />
+              {currentWebsiteMock && activeTab.securityReport?.score <= 40 && (
+                <SocialEngineeringChat report={activeTab.securityReport} targetBrand={activeTab.securityReport?.targetDomain ?? 'PayPal'} />
+              )}
+              </>
             ) : (
               <iframe 
                 src={activeTab.url} 
